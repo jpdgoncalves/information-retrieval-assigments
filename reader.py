@@ -3,6 +3,7 @@ from dataclasses import dataclass
 import csv
 import gzip
 
+
 @dataclass
 class CostumerReview:
     review_id: str
