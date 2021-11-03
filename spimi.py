@@ -1,34 +1,58 @@
-from typing import List, DefaultDict, TextIO
+from typing import List, DefaultDict, TextIO, Optional
+
+import heapq
+
+from functools import total_ordering
 
 from dictionary import PostingsDictionary
 
 
+@total_ordering
 class BlockFile:
-    def __init__(self):
-        self.file = None
-        self.term = None
-        self.postings = None
+    def __init__(self, block_name: str):
+        self.file = open(block_name, encoding="utf-8")
+        self.line = self.file.readline()
+        self.term: Optional[str] = None
+        self.postings: Optional[str] = None
 
     def next(self):
         """
-        Reads the next line of the block file if there is one
-        :return:
+        Sets the next term and postings of the block file.
+        If the end of the file has been reached it sets them to
+        None
         """
-        pass
+        if not self.has_next():
+            self.term = None
+            self.postings = None
+            return
+
+        (term, postings) = self.line.split(";", 1)
+        self.term = term
+        self.postings = postings
+        self.line = self.file.readline()
 
     def has_next(self):
         """
-        Checks if there is a next line to read from the block file
-        :return:
+        Tells whether there is a next term for this block file or not
         """
+        return len(self.line) == 0
+
+    def close(self):
+        self.file.close()
+
+    def __eq__(self, other):
+        return self.term == other.term and self.postings == other.postings
+
+    def __lt__(self, other):
+        return (self.term, self.postings) < (other.term, other.postings)
 
 
 class MergedIndex:
-    def __init__(self):
-        self.file = None
+    def __init__(self, index_name):
+        self.file = open(index_name, encoding="utf-8")
         self.recent_term = None
 
-    def write(self, term, postings):
+    def write(self, term: str, postings: str):
         """
         Writes a postings to disk. If the term passed is the same as the previous
         one it will write on the same line otherwise it will write a newline
@@ -36,10 +60,18 @@ class MergedIndex:
         :param postings:
         :return:
         """
-        pass
+        if self.recent_term is None:
+            self.file.write(term)
+            self.recent_term = term
+
+        if self.recent_term != term:
+            self.file.write(f"\n{term}")
+            self.recent_term = term
+
+        self.file.write(f";{postings}")
 
     def close(self):
-        pass
+        self.file.close()
 
 
 def block_writer(block_name_prefix: str):
@@ -80,6 +112,7 @@ def merge_blocks(merged_file_name: str, block_file_names: List[str]):
     Creates a special purpose priority queue of BlockFile.
     We request one BlockFile out of the queue at a time and write the current term and postings
     to the MergedIndex. Once the queue is empty the merging is finished and we exit the algorithm
+    :param merged_file_name:
     :param block_file_names:
     :return:
     """
