@@ -15,6 +15,8 @@ class BlockFile:
         self.term: Optional[str] = None
         self.postings: Optional[str] = None
 
+        self.next()
+
     def next(self):
         """
         Sets the next term and postings of the block file.
@@ -99,7 +101,7 @@ def write_block(block_name: str, postings_dictionary: PostingsDictionary):
 
         out_file.write("\n")
 
-    with open(block_name, encoding="utf-8") as block_file:
+    with open(block_name, mode="w", encoding="utf-8") as block_file:
         postings_list = postings_dictionary.postings_list
         for term in postings_list:
             block_file.write(term)
@@ -116,4 +118,16 @@ def merge_blocks(merged_file_name: str, block_file_names: List[str]):
     :param block_file_names:
     :return:
     """
-    pass
+    merged_index = MergedIndex(merged_file_name)
+    block_files = [BlockFile(block_name) for block_name in block_file_names]
+    heapq.heapify(block_files)
+
+    while len(block_files) > 0:
+        block_file = heapq.heappop(block_files)
+        merged_index.write(block_file.term, block_file.postings)
+
+        if block_file.has_next():
+            block_file.next()
+            heapq.heappush(block_files, block_file)
+        else:
+            block_file.close()
