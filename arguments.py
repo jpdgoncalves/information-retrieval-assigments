@@ -11,6 +11,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Arguments:
+    corpus_path: str
     min_token_length: Optional[int]
     stopwords: Optional[Set[str]]
     use_potter_stemmer: bool
@@ -74,6 +75,11 @@ arg_parser.add_argument(
     dest="use_potter_stemmer",
     action="store_false"
 )
+# Handling corpus path
+arg_parser.add_argument(
+    "corpus_path",
+    dest="corpus_path"
+)
 
 
 def get_arguments():
@@ -81,6 +87,7 @@ def get_arguments():
 
     arg_values = arg_parser.parse_args()
     return Arguments(
+        arg_values.corpus_path,
         arg_values.min_token_length,
         arg_values.stopwords,
         arg_values.use_potter_stemmer
