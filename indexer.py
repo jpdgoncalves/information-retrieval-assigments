@@ -1,5 +1,8 @@
 from typing import List
 
+import psutil
+import gc
+
 from dictionary import PostingsDictionary
 from processor import ProcessedDocument
 
@@ -22,7 +25,24 @@ class SpimiIndexer:
         self.memory_threshold = memory_threshold
 
     def add_review(self, review: ProcessedDocument):
-        pass
+        if not self._has_memory():
+            self.create_block_and_new_dictionary()
+
+        self.postings_dictionary.add_document(review)
 
     def create_index_file(self):
+        self.create_block_and_new_dictionary()
         spimi.merge_blocks(self.index_name, self.block_names)
+
+    def create_block_and_new_dictionary(self):
+        block_name = self.write_block(self.postings_dictionary)
+        self.block_names.append(block_name)
+        self.postings_dictionary = PostingsDictionary()
+        gc.collect()
+
+    def _has_memory(self):
+        virtual_memory = psutil.virtual_memory()
+        total_memory = virtual_memory.total
+        available = virtual_memory.available
+
+        return 1 - (available / total_memory) < self.memory_threshold

@@ -131,3 +131,5 @@ def merge_blocks(merged_file_name: str, block_file_names: List[str]):
             heapq.heappush(block_files, block_file)
         else:
             block_file.close()
+
+    merged_index.close()
