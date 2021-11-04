@@ -77,8 +77,7 @@ arg_parser.add_argument(
 )
 # Handling corpus path
 arg_parser.add_argument(
-    "corpus_path",
-    dest="corpus_path"
+    "corpus_path"
 )
 
 
