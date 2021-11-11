@@ -2,6 +2,7 @@ from typing import List
 
 import psutil
 import gc
+import os
 
 from dictionary import PostingsDictionary
 from processor import ProcessedDocument
@@ -23,6 +24,17 @@ class SpimiIndexer:
         self.write_block = spimi.block_writer("block")
         self.postings_dictionary = PostingsDictionary()
         self.memory_threshold = memory_threshold
+        self.index_disk_size = 0
+        self.term_count = 0
+
+    @property
+    def blocks_used(self):
+        return len(self.block_names)
+
+    @property
+    def f_index_disk_size(self):
+        mega_bytes = self.index_disk_size / (1024 * 1024)
+        return f"{mega_bytes:.2f}MB"
 
     def add_review(self, review: ProcessedDocument):
         if not self._has_memory():
@@ -32,7 +44,12 @@ class SpimiIndexer:
 
     def create_index_file(self):
         self.create_block_and_new_dictionary()
-        spimi.merge_blocks(self.index_name, self.block_names)
+
+        self.term_count = spimi.merge_blocks(self.index_name, self.block_names)
+        self.index_disk_size = os.path.getsize(self.index_name)
+
+        for block_name in self.block_names:
+            os.remove(block_name)
 
     def create_block_and_new_dictionary(self):
         block_name = self.write_block(self.postings_dictionary)

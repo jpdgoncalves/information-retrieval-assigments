@@ -56,6 +56,7 @@ class MergedIndex:
     def __init__(self, index_name):
         self.file = open(index_name, mode="w", encoding="utf-8")
         self.recent_term = None
+        self.term_count = 0
 
     def write(self, term: str, postings: str):
         """
@@ -66,10 +67,12 @@ class MergedIndex:
         :return:
         """
         if self.recent_term is None:
+            self.term_count += 1
             self.file.write(term)
             self.recent_term = term
 
         if self.recent_term != term:
+            self.term_count += 1
             self.file.write(f"\n{term}")
             self.recent_term = term
 
@@ -121,14 +124,14 @@ def write_block(block_name: str, postings_dictionary: PostingsDictionary):
         print(f"[LOG]: Finished writing block '{block_name}'.")
 
 
-def merge_blocks(merged_file_name: str, block_file_names: List[str]):
+def merge_blocks(merged_file_name: str, block_file_names: List[str]) -> int:
     """
     Creates a special purpose priority queue of BlockFile.
     We request one BlockFile out of the queue at a time and write the current term and postings
     to the MergedIndex. Once the queue is empty the merging is finished and we exit the algorithm
     :param merged_file_name:
     :param block_file_names:
-    :return:
+    :return: Count of the number of term writen to disk.
     """
     merged_index = MergedIndex(merged_file_name)
     block_files = [BlockFile(block_name) for block_name in block_file_names]
@@ -148,3 +151,5 @@ def merge_blocks(merged_file_name: str, block_file_names: List[str]):
             block_file.close()
 
     merged_index.close()
+
+    return merged_index.term_count
