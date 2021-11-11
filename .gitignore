@@ -1,3 +1,5 @@
 venv/
 /amazon_reviews_us_Digital_Video_Games_v1_00.tsv.gz
 /.idea/
+index.txt
+block_*.txt

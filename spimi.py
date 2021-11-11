@@ -11,7 +11,7 @@ from dictionary import PostingsDictionary
 class BlockFile:
     def __init__(self, block_name: str):
         self.file = open(block_name, encoding="utf-8")
-        self.line = self.file.readline()
+        self.line = self.file.readline().strip()
         self.term: Optional[str] = None
         self.postings: Optional[str] = None
 
@@ -31,13 +31,13 @@ class BlockFile:
         (term, postings) = self.line.split(";", 1)
         self.term = term
         self.postings = postings
-        self.line = self.file.readline()
+        self.line = self.file.readline().strip()
 
     def has_next(self):
         """
         Tells whether there is a next term for this block file or not
         """
-        return len(self.line) == 0
+        return len(self.line) != 0
 
     def close(self):
         self.file.close()
@@ -47,6 +47,9 @@ class BlockFile:
 
     def __lt__(self, other):
         return (self.term, self.postings) < (other.term, other.postings)
+
+    def __str__(self):
+        return f"{self.line}, {self.term}, {self.postings}"
 
 
 class MergedIndex:
@@ -102,6 +105,9 @@ def write_block(block_name: str, postings_dictionary: PostingsDictionary):
         out_file.write("\n")
 
     with open(block_name, mode="w", encoding="utf-8") as block_file:
+
+        print(f"[LOG]: writing block '{block_name}'.")
+
         postings_list = postings_dictionary.postings_list
         ordered_terms_list = sorted(
             postings_list,
@@ -110,8 +116,9 @@ def write_block(block_name: str, postings_dictionary: PostingsDictionary):
         
         for term in ordered_terms_list:
             block_file.write(term)
-            block_file.write(";")
             write_postings(postings_list[term], block_file)
+
+        print(f"[LOG]: Finished writing block '{block_name}'.")
 
 
 def merge_blocks(merged_file_name: str, block_file_names: List[str]):
@@ -129,6 +136,9 @@ def merge_blocks(merged_file_name: str, block_file_names: List[str]):
 
     while len(block_files) > 0:
         block_file = heapq.heappop(block_files)
+
+        # print(block_file)
+
         merged_index.write(block_file.term, block_file.postings)
 
         if block_file.has_next():
