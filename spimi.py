@@ -51,7 +51,7 @@ class BlockFile:
 
 class MergedIndex:
     def __init__(self, index_name):
-        self.file = open(index_name, encoding="utf-8")
+        self.file = open(index_name, mode="w", encoding="utf-8")
         self.recent_term = None
 
     def write(self, term: str, postings: str):
@@ -103,7 +103,12 @@ def write_block(block_name: str, postings_dictionary: PostingsDictionary):
 
     with open(block_name, mode="w", encoding="utf-8") as block_file:
         postings_list = postings_dictionary.postings_list
-        for term in postings_list:
+        ordered_terms_list = sorted(
+            postings_list,
+            key=lambda _term: _term
+        )
+        
+        for term in ordered_terms_list:
             block_file.write(term)
             block_file.write(";")
             write_postings(postings_list[term], block_file)

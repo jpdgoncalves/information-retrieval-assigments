@@ -3,6 +3,9 @@ from dataclasses import dataclass
 import csv
 import gzip
 
+# Required because the fields we are reading very large fields.
+csv.field_size_limit(csv.field_size_limit() * 2)
+
 
 @dataclass
 class CostumerReview:
