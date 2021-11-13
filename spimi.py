@@ -1,3 +1,7 @@
+"""
+Functions and classes used to implement the SPIMI algorithm
+#TODO When writing the index in the future I need to write the line lengths in bytes to ease index loading.
+"""
 from typing import List, DefaultDict, TextIO, Optional
 
 import heapq
@@ -103,6 +107,7 @@ def write_block(block_name: str, postings_dictionary: PostingsDictionary):
 
             out_file.write(";")
             out_file.write(review_id)
+            out_file.write(":")
             out_file.write(positions)
 
         out_file.write("\n")

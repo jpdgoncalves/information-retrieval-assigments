@@ -3,7 +3,8 @@ import time
 from arguments import get_arguments
 from indexer import SpimiIndexer
 from processor import DocumentProcessor
-from reader import CostumerReviewReader
+from reader.corpus import CostumerReviewReader
+from reader.index import IndexSearcher
 
 import filters
 
@@ -41,13 +42,28 @@ def main():
     _indexer.create_index_file()
 
     index_end_time = time.time()
-    formated_time = time.strftime('%M:%S', time.gmtime(index_end_time - index_start_time))
+    formatted_time = time.strftime('%M:%S', time.gmtime(index_end_time - index_start_time))
 
-    print(f"[LOG]: Time for indexing: {formated_time}s")
+    print(f"[LOG]: Time for indexing: {formatted_time}s")
     print(f"[LOG]: Index size on disk: {_indexer.f_index_disk_size}")
     print(f"[LOG]: Number of terms: {_indexer.term_count}")
     print(f"[LOG]: Number of temporary segments used: {_indexer.blocks_used}")
 
+    print(f"[LOG]: Loading index '{_indexer.index_name}'")
+    load_start_time = time.time()
+
+    searcher = IndexSearcher(_indexer.index_name)
+
+    load_end_time = time.time()
+    fmt_load_time = time.strftime('%M:%S', time.gmtime(load_end_time - load_start_time))
+    print(f"[LOG]: Finished loading index. Took {fmt_load_time}.")
+
+    query_term = input("Type a term to search (Press Enter without any input to exit): ")
+
+    while len(query_term) > 0:
+        document_frequency = searcher.search_query(query_term)
+        print(f"{document_frequency} documents have the term {query_term}")
+        query_term = input("Type a term to search (Press Enter without any input to exit): ")
 
 if __name__ == "__main__":
     main()

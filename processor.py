@@ -1,7 +1,7 @@
 from typing import List, Callable
 
 from dataclasses import dataclass
-from reader import CostumerReview
+from reader.corpus import CostumerReview
 
 import re
 
