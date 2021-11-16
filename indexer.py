@@ -46,8 +46,11 @@ class SpimiIndexer:
         return f"{mega_bytes:.2f}MB"
 
     def add_review(self, review: ProcessedDocument):
-        if self._review_count >= self._review_count_for_mem_check and not self._has_memory():
-            self.create_block_and_new_dictionary()
+        if self._review_count >= self._review_count_for_mem_check:
+            self._review_count = 0
+
+            if not self._has_memory():
+                self.create_block_and_new_dictionary()
 
         self.postings_dictionary.add_document(review)
         self._review_count += 1
