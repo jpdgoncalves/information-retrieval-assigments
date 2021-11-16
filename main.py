@@ -1,3 +1,6 @@
+"""
+Script that is called to run the indexer and the searcher.
+"""
 import time
 
 from arguments import get_arguments

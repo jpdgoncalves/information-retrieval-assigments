@@ -1,3 +1,6 @@
+"""
+Module containing the function that creates the Corpus Reader.
+"""
 from dataclasses import dataclass
 
 import csv
@@ -20,6 +23,10 @@ class CostumerReview:
 
 
 def CostumerReviewReader(review_file_path: str):
+    """
+    Creates a Generator for the corpus file specified by the path parameter that
+    creates instances of CostumerReview.
+    """
     with gzip.open(review_file_path, "rt", encoding="utf-8") as review_file:
         tsv_reader = csv.DictReader(review_file, delimiter="\t")
 

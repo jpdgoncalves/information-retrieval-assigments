@@ -1,7 +1,7 @@
 """
 This module handles the parsing of the command arguments into an instance
 of Arguments. This instance intends to provide type hints which we wouldn't
-get if he returned the original Namespace object from argparse module.
+get if we returned the original Namespace object from argparse module.
 """
 from typing import Optional, Set
 

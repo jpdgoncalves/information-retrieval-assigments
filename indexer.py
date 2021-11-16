@@ -1,3 +1,6 @@
+"""
+Module containing a indexer that implements SPIMI.
+"""
 from typing import List
 
 import psutil
@@ -13,8 +16,8 @@ import spimi
 class SpimiIndexer:
     def __init__(self, index_name: str, memory_threshold: float):
         """
-        Creates a SpimiIndexer that can be called iteratively
-        on each document.
+        Creates a SpimiIndexer. Call add_review for all documents and once
+        all have been added, call create_index_file at the end.
         :param index_name: The name of the final merged index
         :param memory_threshold: The amount of memory to be used as decimal between 0 and 1.
         For example 0.5 would mean 50% of the memory available.

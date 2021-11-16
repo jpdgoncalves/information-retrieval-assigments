@@ -1,5 +1,5 @@
 """
-Functions and classes used to implement the SPIMI algorithm
+Functions and classes used to implement the SPIMI algorithm.
 #TODO When writing the index in the future I need to write the line lengths in bytes to ease index loading.
 """
 from typing import List, DefaultDict, TextIO, Optional

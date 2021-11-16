@@ -1,3 +1,7 @@
+"""
+Module containing a simple helper Data Structure that handles the construction
+of an inverted dictionary.
+"""
 from typing import DefaultDict, List
 
 from collections import defaultdict
