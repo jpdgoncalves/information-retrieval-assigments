@@ -1,7 +1,7 @@
 """
 Module containing the DocumentProcessor.
 """
-from typing import List, Callable
+from typing import List, Callable, Generator
 
 from dataclasses import dataclass
 from reader.corpus import CostumerReview
@@ -21,7 +21,7 @@ class Token:
 @dataclass
 class ProcessedDocument:
     id: str
-    tokens: List[Token]
+    tokens: Generator[Token, None, None]
 
 
 class DocumentProcessor:
@@ -37,7 +37,7 @@ class DocumentProcessor:
         """
         content = regex_pattern.sub(" ", costumer_review.content)
         words = content.split(" ")
-        tokens = [Token(word, pos) for pos, word in enumerate(words)]
+        tokens = (Token(word, pos) for pos, word in enumerate(words))
         processed_document = ProcessedDocument(costumer_review.review_id, tokens)
 
         for processor in self.processors:
