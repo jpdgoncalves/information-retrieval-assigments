@@ -1,41 +1,65 @@
-python .\main.py .\amazon_reviews_us_Digital_Video_Games_v1_00.tsv.gz
-[LOG]: writing block 'block_0.txt'.
+python .\main.py -memt 0.3 .\amazon_reviews_us_Digital_Video_Games_v1_00.tsv.gz
+Corpus Path: .\amazon_reviews_us_Digital_Video_Games_v1_00.tsv.gz
+Minimum Token Length: 3
+Stopwords: Yes
+Use Stemmer: Yes
+Memory Threshold: 0.3
+Index Path: index.txt
+[LOG]: Writing block 'block_0.txt'.
 [LOG]: Finished writing block 'block_0.txt'.
-[LOG]: Time for indexing: 00:33s
-[LOG]: Index size on disk: 77.34MB
-[LOG]: Number of terms: 49123
+[LOG]: Merging blocks into 'index.txt'
+[LOG]: Time for indexing: 00:31s
+[LOG]: Index size on disk: 76.66MB
+[LOG]: Number of terms: 47119
 [LOG]: Number of temporary segments used: 1
 [LOG]: Loading index 'index.txt'
 [LOG]: Finished loading index. Took 00:00.
 
-python .\main.py .\amazon_reviews_us_Digital_Music_Purchase_v1_00.tsv.gz
-[LOG]: writing block 'block_0.txt'.
+python .\main.py -memt 0.3 .\amazon_reviews_us_Digital_Music_Purchase_v1_00.tsv.gz
+Corpus Path: .\amazon_reviews_us_Digital_Music_Purchase_v1_00.tsv.gz
+Minimum Token Length: 3
+Stopwords: Yes
+Use Stemmer: Yes
+Memory Threshold: 0.3
+Index Path: index.txt
+[LOG]: Writing block 'block_0.txt'.
 [LOG]: Finished writing block 'block_0.txt'.
-[LOG]: Time for indexing: 04:59s
-[LOG]: Index size on disk: 642.47MB
-[LOG]: Number of terms: 258192
-[LOG]: Number of temporary segments used: 1
+[LOG]: Writing block 'block_1.txt'.
+[LOG]: Finished writing block 'block_1.txt'.
+[LOG]: Merging blocks into 'index.txt'
+[LOG]: Time for indexing: 04:41s
+[LOG]: Index size on disk: 640.31MB
+[LOG]: Number of terms: 290351
+[LOG]: Number of temporary segments used: 2
 [LOG]: Loading index 'index.txt'
 [LOG]: Finished loading index. Took 00:04.
 
 python .\main.py -memt 0.3 .\amazon_reviews_us_Music_v1_00.tsv.gz
-[LOG]: writing block 'block_0.txt'.
+Corpus Path: .\amazon_reviews_us_Music_v1_00.tsv.gz
+Minimum Token Length: 3
+Stopwords: Yes
+Use Stemmer: Yes
+Memory Threshold: 0.3
+Index Path: index.txt
+[LOG]: Writing block 'block_0.txt'.
 [LOG]: Finished writing block 'block_0.txt'.
-[LOG]: writing block 'block_1.txt'.
+[LOG]: Writing block 'block_1.txt'.
 [LOG]: Finished writing block 'block_1.txt'.
-[LOG]: writing block 'block_2.txt'.
+[LOG]: Writing block 'block_2.txt'.
 [LOG]: Finished writing block 'block_2.txt'.
-[LOG]: writing block 'block_3.txt'.
+[LOG]: Writing block 'block_3.txt'.
 [LOG]: Finished writing block 'block_3.txt'.
-[LOG]: writing block 'block_4.txt'.
+[LOG]: Writing block 'block_4.txt'.
 [LOG]: Finished writing block 'block_4.txt'.
-[LOG]: writing block 'block_5.txt'.
+[LOG]: Writing block 'block_5.txt'.
 [LOG]: Finished writing block 'block_5.txt'.
-[LOG]: writing block 'block_6.txt'.
+[LOG]: Writing block 'block_6.txt'.
 [LOG]: Finished writing block 'block_6.txt'.
-[LOG]: Time for indexing: 36:59s
-[LOG]: Index size on disk: 4129.86MB
-[LOG]: Number of terms: 799286
+[LOG]: Merging blocks into 'index.txt'
+[LOG]: Time for indexing: 33:22s
+[LOG]: Index size on disk: 4139.52MB
+[LOG]: Number of terms: 868132
 [LOG]: Number of temporary segments used: 7
 [LOG]: Loading index 'index.txt'
 [LOG]: Finished loading index. Took 00:29.
+

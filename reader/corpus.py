@@ -33,7 +33,7 @@ def CostumerReviewReader(review_file_path: str):
         for review_row in tsv_reader:
             yield CostumerReview(
                 review_row["review_id"],
-                review_row["product_title"].lower(),
-                review_row["review_headline"].lower(),
-                review_row["review_body"].lower()
+                review_row["product_title"].lower() if review_row["review_headline"] is not None else "",
+                review_row["review_headline"].lower() if review_row["review_headline"] is not None else "",
+                review_row["review_body"].lower() if review_row["review_headline"] is not None else ""
             )
