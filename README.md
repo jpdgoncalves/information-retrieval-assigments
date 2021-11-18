@@ -24,4 +24,5 @@ of documents with said word.
 - ``-sw --stopwords``: Tells the script to use the specified stopwords file. This file must be structured as one word per line.
 - ``-nsw --no-stopwords``: Tells the script to not filter stopwords. Overrides the previous option.
 - ``-nst --no-stemmer``: Tells the script to not stem the tokens.
+- ``-memt --memory-threshold``: Tells the script how much of the total memory it is allowed to use. The value of the parameter must be between 0 and 1. This is a soft limit. it may go a little over the specified value.
 - ``-o --index-path``: Tells the script the path of the index file. If not specified it will default to `index.txt`

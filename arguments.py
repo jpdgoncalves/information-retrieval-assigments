@@ -15,7 +15,7 @@ class Arguments:
     min_token_length: Optional[int]
     stopwords: Optional[Set[str]]
     use_potter_stemmer: bool
-    memory_threshold: Optional[float]
+    memory_threshold: float
     index_path: str
 
 
@@ -126,3 +126,12 @@ def get_arguments():
         arg_values.memory_threshold,
         arg_values.index_path
     )
+
+
+def print_arguments(_arguments: Arguments):
+    print(f"Corpus Path: {_arguments.corpus_path}")
+    print(f"Minimum Token Length: {_arguments.min_token_length if _arguments.min_token_length is not None else 'No'}")
+    print(f"Stopwords: {'Yes' if _arguments.stopwords is not None else 'No'}")
+    print(f"Use Stemmer: {'Yes' if _arguments.use_potter_stemmer else 'No'}")
+    print(f"Memory Threshold: {_arguments.memory_threshold}")
+    print(f"Index Path: {_arguments.index_path}")

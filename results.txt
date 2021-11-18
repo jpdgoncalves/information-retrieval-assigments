@@ -1,0 +1,41 @@
+python .\main.py .\amazon_reviews_us_Digital_Video_Games_v1_00.tsv.gz
+[LOG]: writing block 'block_0.txt'.
+[LOG]: Finished writing block 'block_0.txt'.
+[LOG]: Time for indexing: 00:33s
+[LOG]: Index size on disk: 77.34MB
+[LOG]: Number of terms: 49123
+[LOG]: Number of temporary segments used: 1
+[LOG]: Loading index 'index.txt'
+[LOG]: Finished loading index. Took 00:00.
+
+python .\main.py .\amazon_reviews_us_Digital_Music_Purchase_v1_00.tsv.gz
+[LOG]: writing block 'block_0.txt'.
+[LOG]: Finished writing block 'block_0.txt'.
+[LOG]: Time for indexing: 04:59s
+[LOG]: Index size on disk: 642.47MB
+[LOG]: Number of terms: 258192
+[LOG]: Number of temporary segments used: 1
+[LOG]: Loading index 'index.txt'
+[LOG]: Finished loading index. Took 00:04.
+
+python .\main.py -memt 0.3 .\amazon_reviews_us_Music_v1_00.tsv.gz
+[LOG]: writing block 'block_0.txt'.
+[LOG]: Finished writing block 'block_0.txt'.
+[LOG]: writing block 'block_1.txt'.
+[LOG]: Finished writing block 'block_1.txt'.
+[LOG]: writing block 'block_2.txt'.
+[LOG]: Finished writing block 'block_2.txt'.
+[LOG]: writing block 'block_3.txt'.
+[LOG]: Finished writing block 'block_3.txt'.
+[LOG]: writing block 'block_4.txt'.
+[LOG]: Finished writing block 'block_4.txt'.
+[LOG]: writing block 'block_5.txt'.
+[LOG]: Finished writing block 'block_5.txt'.
+[LOG]: writing block 'block_6.txt'.
+[LOG]: Finished writing block 'block_6.txt'.
+[LOG]: Time for indexing: 36:59s
+[LOG]: Index size on disk: 4129.86MB
+[LOG]: Number of terms: 799286
+[LOG]: Number of temporary segments used: 7
+[LOG]: Loading index 'index.txt'
+[LOG]: Finished loading index. Took 00:29.

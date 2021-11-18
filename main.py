@@ -3,7 +3,7 @@ Script that is called to run the indexer and the searcher.
 """
 import time
 
-from arguments import get_arguments
+from arguments import get_arguments, print_arguments
 from indexer import SpimiIndexer
 from processor import DocumentProcessor
 from reader.corpus import CostumerReviewReader
@@ -12,6 +12,9 @@ from reader.index import IndexSearcher
 import filters
 
 
+# TODO: Use generated ids instead of the review ids.
+# When constructing the index write at the end the review ids
+# Their positions will be used as ids in the index
 def main():
     _arguments = get_arguments()
     _reader = CostumerReviewReader(_arguments.corpus_path)
@@ -36,6 +39,7 @@ def main():
             filters.stemmer("english")
         )
 
+    print_arguments(_arguments)
     index_start_time = time.time()
 
     for review in _reader:

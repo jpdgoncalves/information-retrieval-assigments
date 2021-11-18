@@ -114,7 +114,7 @@ def write_block(block_name: str, postings_dictionary: PostingsDictionary):
 
     with open(block_name, mode="w", encoding="utf-8") as block_file:
 
-        print(f"[LOG]: writing block '{block_name}'.")
+        print(f"[LOG]: Writing block '{block_name}'.")
 
         postings_list = postings_dictionary.postings_list
         ordered_terms_list = sorted(
@@ -138,6 +138,8 @@ def merge_blocks(merged_file_name: str, block_file_names: List[str]) -> int:
     :param block_file_names:
     :return: Count of the number of term writen to disk.
     """
+    print(f"[LOG]: Merging blocks into '{merged_file_name}'")
+
     merged_index = MergedIndex(merged_file_name)
     block_files = [BlockFile(block_name) for block_name in block_file_names]
     heapq.heapify(block_files)
