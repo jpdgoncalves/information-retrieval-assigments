@@ -1,5 +1,7 @@
 """
 Script that is called to run the indexer and the searcher.
+
+Made by: José Gonçalves nº84967
 """
 import time
 
