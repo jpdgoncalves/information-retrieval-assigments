@@ -1,7 +1,6 @@
 """
 Module containing a indexer that implements SPIMI.
 """
-from typing import List
 
 import psutil
 import gc
@@ -9,6 +8,7 @@ import os
 
 from dictionary import PostingsDictionary
 from processor import ProcessedDocument
+from spimi_refactor.blocks import BlockWriter
 
 import spimi
 
@@ -25,8 +25,7 @@ class SpimiIndexer:
         For example 0.5 would mean 50% of the memory available.
         """
         self.index_name = index_name
-        self.block_names: List[str] = []
-        self.write_block = spimi.block_writer("block")
+        self.block_writer = BlockWriter(index_name, "block_")
         self.postings_dictionary = PostingsDictionary()
         self.memory_threshold = memory_threshold
         self.index_disk_size = 0
@@ -38,7 +37,11 @@ class SpimiIndexer:
 
     @property
     def blocks_used(self):
-        return len(self.block_names)
+        return self.block_writer.block_count
+
+    @property
+    def block_names(self):
+        return self.block_writer.block_names
 
     @property
     def f_index_disk_size(self):
@@ -65,7 +68,7 @@ class SpimiIndexer:
             os.remove(block_name)
 
     def create_block_and_new_dictionary(self):
-        block_name = self.write_block(self.postings_dictionary)
+        block_name = self.block_writer.write_block(self.postings_dictionary)
         self.block_names.append(block_name)
         self.postings_dictionary = PostingsDictionary()
         gc.collect()

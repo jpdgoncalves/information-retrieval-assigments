@@ -20,7 +20,8 @@ class Token:
 
 @dataclass
 class ProcessedDocument:
-    id: str
+    id: int
+    review_id: str
     tokens: Generator[Token, None, None]
 
 
@@ -38,7 +39,11 @@ class DocumentProcessor:
         content = regex_pattern.sub(" ", costumer_review.content)
         words = content.split(" ")
         tokens = (Token(word, pos) for pos, word in enumerate(words))
-        processed_document = ProcessedDocument(costumer_review.review_id, tokens)
+        processed_document = ProcessedDocument(
+            costumer_review.doc_id,
+            costumer_review.review_id,
+            tokens
+        )
 
         for processor in self.processors:
             processed_document = processor(processed_document)

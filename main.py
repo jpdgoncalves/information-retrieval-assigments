@@ -51,7 +51,7 @@ def main():
     _indexer.create_index_file()
 
     index_end_time = time.time()
-    formatted_time = time.strftime('%M:%S', time.gmtime(index_end_time - index_start_time))
+    formatted_time = time.strftime('%H:%M:%S', time.gmtime(index_end_time - index_start_time))
 
     print(f"[LOG]: Time for indexing: {formatted_time}s")
     print(f"[LOG]: Index size on disk: {_indexer.f_index_disk_size}")
