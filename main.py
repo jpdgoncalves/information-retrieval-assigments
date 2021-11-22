@@ -74,5 +74,6 @@ def main():
         print(f"{document_frequency} documents have the term {query_term}")
         query_term = input("Type a term to search (Press Enter without any input to exit): ")
 
+
 if __name__ == "__main__":
     main()

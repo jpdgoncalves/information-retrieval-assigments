@@ -1,21 +1,11 @@
-"""
-Functions and classes used to implement the SPIMI algorithm.
-"""
-# TODO: Fix this module as it will not work for the time being
-# The Index must be remade from a file into a directory.
-# This directory will contain:
-# - A file that maps doc_ids to review_ids;
-# - A file that maps terms to its postings;
-# - A directory containing:
-#   - Multiple posting files;
 from typing import List
 
 import heapq
 
-from spimi_refactor.blocks import BlockReader
+from blocks import BlockReader
 
 
-class MergedIndex:
+class BlockMerger:
     def __init__(self, index_name):
         self.file = open(index_name, mode="w", encoding="utf-8")
         self.recent_term = None
@@ -56,7 +46,7 @@ def merge_blocks(merged_file_name: str, block_file_names: List[str]) -> int:
     """
     print(f"[LOG]: Merging blocks into '{merged_file_name}'")
 
-    merged_index = MergedIndex(merged_file_name)
+    merged_index = BlockMerger(merged_file_name)
     block_files = [BlockReader(block_name) for block_name in block_file_names]
     heapq.heapify(block_files)
 

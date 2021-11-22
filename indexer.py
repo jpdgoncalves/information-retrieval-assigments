@@ -8,9 +8,8 @@ import os
 
 from dictionary import PostingsDictionary
 from processor import ProcessedDocument
-from spimi_refactor.blocks import BlockWriter
-
-import spimi
+from spimi.blocks import BlockWriter
+from spimi.merger import merge_blocks
 
 
 class SpimiIndexer:
@@ -61,7 +60,7 @@ class SpimiIndexer:
     def create_index_file(self):
         self.create_block_and_new_dictionary()
 
-        self.term_count = spimi.merge_blocks(self.index_name, self.block_names)
+        self.term_count = merge_blocks(self.index_name, self.block_names)
         self.index_disk_size = os.path.getsize(self.index_name)
 
         for block_name in self.block_names:

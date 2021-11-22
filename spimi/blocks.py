@@ -54,7 +54,7 @@ class BlockReader:
 
 def _write_postings(term: str, block_file: TextIO, postings: Dict[int, List[int]]):
     """
-    Writes a single line of the file
+    Writes a single line of the block file
     :param term:
     :param block_file:
     :param postings:
@@ -113,11 +113,12 @@ class BlockWriter:
         :return:
         """
         block_name = f"{self.blocks_dir_path}/{self.block_prefix}_{self.block_count}.txt"
+        postings_list = postings_dict.postings_list
+        ordered_terms_list = sorted(postings_list.keys())
 
         with open(block_name, "w") as block_file:
-            postings_list = postings_dict.postings_list
 
-            for term in postings_list:
+            for term in ordered_terms_list:
                 _write_postings(term, block_file, postings_list[term])
 
         return block_name
