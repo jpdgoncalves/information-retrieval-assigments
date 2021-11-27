@@ -2,7 +2,7 @@ from typing import List
 
 import heapq
 
-from blocks import BlockReader
+from .blocks import BlockReader
 
 
 class BlockMerger:

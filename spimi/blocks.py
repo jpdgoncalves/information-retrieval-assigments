@@ -2,7 +2,7 @@ from typing import Optional, List, Dict, TextIO
 
 from functools import total_ordering
 
-import os
+import logging
 
 from dictionary import PostingsDictionary
 
@@ -63,8 +63,17 @@ def _write_postings(term: str, block_file: TextIO, postings: Dict[int, List[int]
     block_file.write(term)
 
     for doc_id, positions in postings.items():
-        block_file.write(f";{doc_id}")
-        block_file.write(f"{','.join(map(str, positions))}")
+        block_file.write(f";{doc_id}:{len(positions)}:")
+
+        first_pos, *remaining_pos = positions
+
+        block_file.write(str(first_pos))
+
+        for pos in remaining_pos:
+            block_file.write(",")
+            block_file.write(str(pos))
+
+    block_file.write("\n")
 
 
 class BlockWriter:
@@ -72,15 +81,11 @@ class BlockWriter:
     Class responsible for writing blocks and store information
     relevant to retrieve them.
     """
-    def __init__(self, index_path: str, prefix: str):
-        self.index_path = index_path
-        self.review_ids_path = f"{index_path}/review_ids.txt"
-        self.blocks_dir_path = f"{index_path}/blocks"
+    def __init__(self, reviews_ids_path: str, blocks_dir_path: str, prefix: str):
+        self.review_ids_path = reviews_ids_path
+        self.blocks_dir_path = blocks_dir_path
         self.block_prefix = prefix
         self.block_names: List[str] = []
-
-        if not os.path.isdir(self.blocks_dir_path):
-            os.mkdir(self.blocks_dir_path)
 
     @property
     def block_count(self):
@@ -102,9 +107,14 @@ class BlockWriter:
         :param postings_dict:
         :return:
         """
+        logging.debug(f"Writing review ids to {self.review_ids_path}")
+
         with open(self.review_ids_path, "a") as review_ids_file:
             for doc_id in postings_dict.doc_id_mapping:
                 review_ids_file.write(postings_dict.doc_id_mapping[doc_id])
+                review_ids_file.write("\n")
+
+        logging.debug(f"Finished writing review ids to {self.review_ids_path}")
 
     def _write_block(self, postings_dict: PostingsDictionary):
         """
@@ -112,13 +122,17 @@ class BlockWriter:
         :param postings_dict:
         :return:
         """
-        block_name = f"{self.blocks_dir_path}/{self.block_prefix}_{self.block_count}.txt"
+        block_name = f"{self.blocks_dir_path}/{self.block_prefix}{self.block_count}.txt"
         postings_list = postings_dict.postings_list
         ordered_terms_list = sorted(postings_list.keys())
+
+        logging.debug(f"Writing block to {block_name}")
 
         with open(block_name, "w") as block_file:
 
             for term in ordered_terms_list:
                 _write_postings(term, block_file, postings_list[term])
+
+        logging.debug(f"Finished writing block to {block_name}")
 
         return block_name

@@ -1,5 +1,5 @@
 venv/
 *.tsv.gz
 /.idea/
-index.txt
+index/
 block_*.txt

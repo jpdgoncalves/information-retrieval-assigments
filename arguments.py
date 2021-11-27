@@ -17,6 +17,7 @@ class Arguments:
     use_potter_stemmer: bool
     memory_threshold: float
     index_path: str
+    debug_mode: bool
 
 
 def _positive_int(value_str: str) -> int:
@@ -49,7 +50,8 @@ default_arguments = {
     "stopwords": _read_stopwords_file("stopwords.txt"),
     "use_potter_stemmer": True,
     "memory_threshold": 0.5,
-    "index_path": "index.txt"
+    "index_path": "index",
+    "debug_mode": False
 }
 
 arg_parser = ArgumentParser(
@@ -107,6 +109,16 @@ arg_parser.add_argument(
     default=default_arguments["index_path"]
 )
 
+
+# Sets script into debug mode
+arg_parser.add_argument(
+    "-d", "--debug",
+    dest="debug_mode",
+    action="store_true",
+    default=default_arguments["debug_mode"]
+)
+
+
 # Handling corpus path
 arg_parser.add_argument(
     "corpus_path"
@@ -124,7 +136,8 @@ def get_arguments():
         arg_values.stopwords,
         arg_values.use_potter_stemmer,
         arg_values.memory_threshold,
-        arg_values.index_path
+        arg_values.index_path,
+        arg_values.debug_mode
     )
 
 
@@ -135,3 +148,4 @@ def print_arguments(_arguments: Arguments):
     print(f"Use Stemmer: {'Yes' if _arguments.use_potter_stemmer else 'No'}")
     print(f"Memory Threshold: {_arguments.memory_threshold}")
     print(f"Index Path: {_arguments.index_path}")
+    print(f"Debug Mode: {'Yes' if _arguments.debug_mode else 'No'}")

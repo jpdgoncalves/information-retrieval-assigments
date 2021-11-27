@@ -3,6 +3,7 @@ Script that is called to run the indexer and the searcher.
 
 Made by: José Gonçalves nº84967
 """
+import logging
 import time
 
 from arguments import get_arguments, print_arguments
@@ -17,6 +18,8 @@ import filters
 # TODO: Use generated ids instead of the review ids.
 # When constructing the index write at the end the review ids
 # Their positions will be used as ids in the index
+# Two passes for BM25
+# Make an intermidiate index involving N, df, dl, avdl
 def main():
     _arguments = get_arguments()
     _reader = CostumerReviewReader(_arguments.corpus_path)
@@ -41,6 +44,9 @@ def main():
             filters.stemmer("english")
         )
 
+    if _arguments.debug_mode:
+        logging.basicConfig(level=logging.DEBUG)
+
     print_arguments(_arguments)
     index_start_time = time.time()
 
@@ -58,10 +64,10 @@ def main():
     print(f"[LOG]: Number of terms: {_indexer.term_count}")
     print(f"[LOG]: Number of temporary segments used: {_indexer.blocks_used}")
 
-    print(f"[LOG]: Loading index '{_indexer.index_name}'")
+    print(f"[LOG]: Loading index '{_indexer.index_path}'")
     load_start_time = time.time()
 
-    searcher = IndexSearcher(_indexer.index_name)
+    searcher = IndexSearcher(_indexer.index_path)
 
     load_end_time = time.time()
     fmt_load_time = time.strftime('%M:%S', time.gmtime(load_end_time - load_start_time))
