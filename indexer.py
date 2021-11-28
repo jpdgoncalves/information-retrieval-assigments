@@ -75,10 +75,10 @@ class SpimiIndexer:
         self.postings_dictionary.add_document(review)
 
         if self.review_count % self._review_count_for_mem_check == 0 and not self._has_memory():
-            self.create_block_and_new_dictionary()
+            self._create_block_and_new_dictionary()
 
     def create_index_file(self):
-        self.create_block_and_new_dictionary()
+        self._create_block_and_new_dictionary()
 
         self.term_count = merge_blocks(self.index_path, self.block_names)
         self.index_disk_size = os.path.getsize(self.index_path)
@@ -86,7 +86,7 @@ class SpimiIndexer:
         for block_name in self.block_names:
             os.remove(block_name)
 
-    def create_block_and_new_dictionary(self):
+    def _create_block_and_new_dictionary(self):
         block_name = self.block_writer.write_block(self.postings_dictionary)
         self.block_names.append(block_name)
         self.postings_dictionary = PostingsDictionary()

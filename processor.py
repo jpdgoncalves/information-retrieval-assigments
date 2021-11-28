@@ -3,7 +3,6 @@ Module containing the DocumentProcessor.
 """
 from typing import Iterable, List, Callable
 
-from dataclasses import dataclass
 from reader.corpus import CostumerReview
 
 import re
@@ -12,18 +11,18 @@ import re
 regex_pattern = re.compile("[^a-z]")
 
 
-@dataclass
 class Token:
-    word: str
-    pos: int
+    def __init__(self, word: str, pos: int):
+        self.word = word
+        self.pos = pos
 
 
-@dataclass
 class ProcessedDocument:
-    id: int
-    review_id: str
-    tokens: Iterable[Token]
-    document_length: int
+    def __init__(self, _id: int, review_id: str, tokens: Iterable[Token], document_length: int):
+        self.id = _id
+        self.review_id = review_id
+        self.tokens = tokens
+        self.document_length = document_length
 
 
 class DocumentProcessor:

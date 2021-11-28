@@ -54,6 +54,7 @@ def main():
         processed_review = _processor.process(review)
         _indexer.add_review(processed_review)
 
+    exit(0)
     _indexer.create_index_file()
 
     index_end_time = time.time()
