@@ -6,7 +6,7 @@ from typing import List
 from definitions import (
     ProcessedDocument,
     ReviewId, Vocabulary, Postings,
-    WeightFunction, TermIndex
+    WeightFunction, TermIndex, TermPostings
 )
 
 from collections import defaultdict
@@ -28,7 +28,7 @@ def _aggregate(document: ProcessedDocument) -> TermIndex:
 
 
 # noinspection PyTypeChecker
-def normalized_tf_weight_function(term_index: TermIndex) -> Postings:
+def normalized_tf_weight_function(term_index: TermIndex) -> TermPostings:
     postings = {}
 
     for term, positions in term_index.items():
@@ -44,7 +44,7 @@ def normalized_tf_weight_function(term_index: TermIndex) -> Postings:
 
 
 # noinspection PyTypeChecker
-def term_count_function(term_index: TermIndex) -> Postings:
+def term_count_function(term_index: TermIndex) -> TermPostings:
     postings = {}
 
     for term, positions in term_index.items():
@@ -67,3 +67,11 @@ class PostingsDictionary:
 
         for term, posting in postings.items():
             self.postings_list[term][document.id] = posting
+
+
+def tf_idf_dictionary():
+    return PostingsDictionary(normalized_tf_weight_function)
+
+
+def term_count_dictionary():
+    return PostingsDictionary(term_count_function)
