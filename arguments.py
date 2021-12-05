@@ -17,6 +17,7 @@ class Arguments:
     use_potter_stemmer: bool
     memory_threshold: float
     index_path: str
+    indexing_format: str
     debug_mode: bool
 
 
@@ -45,12 +46,25 @@ def _read_stopwords_file(file_path: str) -> Set[str]:
     return stopwords
 
 
+def _union_of(*values):
+    allowed_values = set(values)
+
+    def _check_value(value):
+        if value not in allowed_values:
+            raise f"{value} is not part of {allowed_values}"
+
+        return value
+
+    return _check_value
+
+
 default_arguments = {
     "min_token_length": 3,
     "stopwords": _read_stopwords_file("stopwords.txt"),
     "use_potter_stemmer": True,
     "memory_threshold": 0.5,
     "index_path": "index",
+    "indexing_format": "tf-idf",
     "debug_mode": False
 }
 
@@ -109,6 +123,13 @@ arg_parser.add_argument(
     default=default_arguments["index_path"]
 )
 
+# Handling indexing format
+arg_parser.add_argument(
+    "-if", "--indexing-format",
+    dest="indexing_format",
+    type=_union_of("tf-idf", "bm25"),
+    default=default_arguments["indexing_format"]
+)
 
 # Sets script into debug mode
 arg_parser.add_argument(
@@ -137,6 +158,7 @@ def get_arguments():
         arg_values.use_potter_stemmer,
         arg_values.memory_threshold,
         arg_values.index_path,
+        arg_values.indexing_format,
         arg_values.debug_mode
     )
 
@@ -148,4 +170,5 @@ def print_arguments(_arguments: Arguments):
     print(f"Use Stemmer: {'Yes' if _arguments.use_potter_stemmer else 'No'}")
     print(f"Memory Threshold: {_arguments.memory_threshold}")
     print(f"Index Path: {_arguments.index_path}")
+    print(f"Indexing Format: {_arguments.indexing_format}")
     print(f"Debug Mode: {'Yes' if _arguments.debug_mode else 'No'}")
