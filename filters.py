@@ -1,17 +1,21 @@
 """
 Module that contains the filter functions to be added to the DocumentProcessor
 """
-from typing import Callable
+from typing import Set, Iterable
 
 import Stemmer
 
-from processor import ProcessedDocument, Token
+
+def filter_tokens_by_length(min_length: int):
+    def _filter(tokens: Iterable[str]):
+        return [token for token in tokens if len(token) >= min_length]
+
+    return _filter
 
 
-def filter_token(condition: Callable[[Token], bool]):
-    def _filter(document: ProcessedDocument):
-        document.tokens = filter(condition, document.tokens)
-        return document
+def filter_stopwords(stopwords: Set[str]):
+    def _filter(tokens: Iterable[str]):
+        return [token for token in tokens if token not in stopwords]
 
     return _filter
 
@@ -19,12 +23,7 @@ def filter_token(condition: Callable[[Token], bool]):
 def stemmer(language: str):
     stemmer_instance = Stemmer.Stemmer(language)
 
-    def stem_word(token: Token):
-        token.word = stemmer_instance.stemWord(token.word)
-        return token
-
-    def stem(document: ProcessedDocument):
-        document.tokens = (stem_word(token) for token in document.tokens)
-        return document
+    def stem(tokens: Iterable[str]):
+        return [stemmer_instance.stemWord(token) for token in tokens]
 
     return stem
