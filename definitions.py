@@ -46,7 +46,7 @@ DocLength = int
 Term = str
 
 Posting = Tuple[Weight, List[Position]]
-Postings = Dict[DocId, Posting]
+Postings = List[Tuple[DocId, Posting]]
 Vocabulary = DefaultDict[Term, Postings]
 TermIndex = Dict[Term, List[Position]]
 TermPostings = Dict[Term, Posting]

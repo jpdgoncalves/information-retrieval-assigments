@@ -15,7 +15,7 @@ import math
 
 
 def _postings() -> Postings:
-    return {}
+    return []
 
 
 def _aggregate(document: ProcessedDocument) -> TermIndex:
@@ -66,7 +66,7 @@ class PostingsDictionary:
         self.review_ids.append(document.review_id)
 
         for term, posting in postings.items():
-            self.postings_list[term][document.id] = posting
+            self.postings_list[term].append((document.id, posting))
 
 
 def tf_idf_dictionary():
