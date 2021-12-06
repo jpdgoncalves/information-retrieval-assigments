@@ -3,3 +3,5 @@ venv/
 /.idea/
 index/
 block_*.txt
+planning.py
+planning.txt
