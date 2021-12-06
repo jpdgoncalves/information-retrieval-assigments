@@ -5,21 +5,10 @@ Module containing the function that creates the Corpus Reader.
 import csv
 import gzip
 
+from definitions import CostumerReview
+
 # Required because the fields we are reading very large fields.
 csv.field_size_limit(csv.field_size_limit() * 2)
-
-
-class CostumerReview:
-    def __init__(self, doc_id: int, review_id: str, product_title: str, review_headline: str, review_body: str):
-        self.doc_id = doc_id
-        self.review_id = review_id
-        self.product_title = product_title
-        self.review_headline = review_headline
-        self.review_body = review_body
-
-    @property
-    def content(self):
-        return f"{self.product_title} {self.review_headline} {self.review_body}"
 
 
 def CostumerReviewReader(review_file_path: str, doc_id_counter: int = 0):
