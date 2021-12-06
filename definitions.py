@@ -50,6 +50,7 @@ Postings = List[Tuple[DocId, Posting]]
 Vocabulary = DefaultDict[Term, Postings]
 TermIndex = Dict[Term, List[Position]]
 TermPostings = Dict[Term, Posting]
+TermPostingsEntry = Tuple[Term, Postings]
 
 Processor = Callable[[Iterable[str]], Iterable[str]]
 WeightFunction = Callable[[TermIndex], TermPostings]
