@@ -22,6 +22,7 @@ class BlockWriter:
 
     def write(self, vocabulary: Vocabulary):
         block_name = self._generate_block_name()
+        print(f"[BlockWriter]: Writing {block_name}")
 
         with open(block_name, "wb") as block_file:
             sorted_terms = sorted(vocabulary.keys())
@@ -30,9 +31,10 @@ class BlockWriter:
                 pickle.dump((term, vocabulary[term]), block_file, pickle.HIGHEST_PROTOCOL)
 
         self.block_paths.append(block_name)
+        print(f"[BlockWriter]: Finished writing {block_name}")
 
     def _generate_block_name(self):
-        return f"{self.block_prefix}{self.block_count}.pickle"
+        return f"{self.blocks_path_prefix}{self.block_count}.pickle"
 
 
 class BlockFile:

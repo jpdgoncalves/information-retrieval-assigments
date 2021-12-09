@@ -31,3 +31,19 @@ statistics;
 # 144724 Documents
 # 74613 Terms (word with letters or numbers, that are larger than 3 characters)
 '''
+from time import time
+
+from corpus import CostumerReviewReader
+from processor import DocumentProcessor
+
+import filters
+
+_processor = DocumentProcessor()
+_processor.add_filter(filters.filter_tokens_by_length(3))
+
+start = time()
+for review in CostumerReviewReader("amazon_reviews_us_Digital_Video_Games_v1_00.tsv.gz"):
+    processed_review = _processor.process(review)
+end = time()
+
+print(end - start, "s")

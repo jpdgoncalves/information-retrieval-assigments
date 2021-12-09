@@ -1,9 +1,13 @@
+from typing import Callable, List
+from definitions import ReviewId
+
 from enum import Enum, auto
 
 import os
 import shutil
 
 from .blocks import BlockWriter
+from .segments import IndexSegmentsWriter
 
 
 class IndexCreationOptions(Enum):
@@ -20,18 +24,11 @@ class IndexDirectory:
     def __init__(
             self,
             index_path: str,
-            block_prefix: str = "block_",
-            segment_prefix: str = "segment_",
-            vocab_name: str = "vocabulary.txt",
-            postings_name: str = "postings.txt"
+            block_prefix: str = "block_"
     ):
         self.index_path = index_path
         self.block_prefix = block_prefix
-        self.segment_prefix = segment_prefix
-        self.vocab_name = vocab_name
-        self.postings_name = postings_name
         self.review_ids_path = f"{index_path}/review_ids.txt"
-        self.review_ids_idx_path = f"{index_path}/review_ids_idx.txt"
         self.blocks_dir_path = f"{index_path}/blocks/"
         self.segments_dir_path = f"{index_path}/segments/"
 
@@ -47,7 +44,6 @@ class IndexDirectory:
 
         os.mkdir(self.index_path)
         _create_file(self.review_ids_path)
-        _create_file(self.review_ids_idx_path)
         os.mkdir(self.blocks_dir_path)
         os.mkdir(self.segments_dir_path)
 
@@ -56,3 +52,25 @@ class IndexDirectory:
             raise NotADirectoryError(f"'{self.blocks_dir_path}' is not a directory")
 
         return BlockWriter(self.blocks_dir_path, self.block_prefix)
+
+    def segments_writer(self, segment_format: Callable):
+        return IndexSegmentsWriter(
+            self.segments_dir_path,
+            segment_format
+        )
+
+    def write_review_ids(self, review_ids: List[ReviewId]):
+        with open(self.review_ids_path, "w", encoding="utf-8") as review_ids_file:
+            review_ids_file.writelines(review_ids)
+
+    def delete_blocks_dir(self):
+        shutil.rmtree(self.blocks_dir_path)
+
+    def index_size(self):
+        total_size = os.path.getsize(self.review_ids_path)
+
+        for segment_path in os.listdir(self.segments_dir_path):
+            for file_path in os.listdir(f"{self.segments_dir_path}/{segment_path}"):
+                total_size = os.path.getsize(f"{self.segments_dir_path}/{segment_path}/{file_path}")
+
+        return total_size

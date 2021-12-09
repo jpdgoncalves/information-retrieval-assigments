@@ -1,4 +1,5 @@
 import psutil
+import time
 
 
 class MemoryChecker:
@@ -31,3 +32,5 @@ class MemoryChecker:
         return (used_memory / total_memory) < self.threshold
 
 
+def format_time_interval(time_stamp):
+    return time.strftime('%H:%M:%S', time.gmtime(time_stamp))
