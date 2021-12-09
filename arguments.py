@@ -25,6 +25,8 @@ class Arguments:
     index_path: str
     indexing_format: IndexingFormat
     debug_mode: bool
+    k1: float
+    b: float
 
 
 def _positive_int(value_str: str) -> int:
@@ -59,7 +61,9 @@ default_arguments = {
     "memory_threshold": 0.5,
     "index_path": "index",
     "indexing_format": IndexingFormat.TF_IDF,
-    "debug_mode": False
+    "debug_mode": False,
+    "k1": 1.2,
+    "b": 0.75
 }
 
 arg_parser = ArgumentParser(
@@ -133,6 +137,21 @@ arg_parser.add_argument(
     default=default_arguments["debug_mode"]
 )
 
+# BM25 Parameters
+arg_parser.add_argument(
+    "-k1",
+    dest="k1",
+    type=float,
+    default=default_arguments["k1"]
+)
+
+arg_parser.add_argument(
+    "-b",
+    dest="b",
+    type=float,
+    default=default_arguments["b"]
+)
+
 
 # Handling corpus path
 arg_parser.add_argument(
@@ -153,7 +172,9 @@ def get_arguments():
         arg_values.memory_threshold,
         arg_values.index_path,
         arg_values.indexing_format,
-        arg_values.debug_mode
+        arg_values.debug_mode,
+        arg_values.k1,
+        arg_values.b
     )
 
 
@@ -165,4 +186,5 @@ def print_arguments(_arguments: Arguments):
     print(f"Memory Threshold: {_arguments.memory_threshold}")
     print(f"Index Path: {_arguments.index_path}")
     print(f"Indexing Format: {_arguments.indexing_format.value}")
+    print(f"BM25 Parameters: k1={_arguments.k1} b={_arguments.b}")
     print(f"Debug Mode: {'Yes' if _arguments.debug_mode else 'No'}")

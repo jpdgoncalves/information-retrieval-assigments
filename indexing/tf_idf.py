@@ -15,14 +15,11 @@ from utils import MemoryChecker
 import filters
 
 
-CALL_CONTROL = 100
-
-
 def create_index(_arguments: Arguments) -> IndexingStatistics:
 
     review_reader = CostumerReviewReader(_arguments.corpus_path)
     review_processor = DocumentProcessor()
-    memory_checker = MemoryChecker(_arguments.memory_threshold, CALL_CONTROL)
+    memory_checker = MemoryChecker(_arguments.memory_threshold)
     postings_dictionary = tf_idf_dictionary()
     index_directory = IndexDirectory(_arguments.index_path)
 
@@ -57,10 +54,12 @@ def create_index(_arguments: Arguments) -> IndexingStatistics:
 
         if memory_checker.has_reached_threshold():
             block_writer.write(postings_dictionary.postings_list)
+            index_directory.write_review_ids(postings_dictionary.review_ids)
             postings_dictionary = tf_idf_dictionary()
             gc.collect()
 
     block_writer.write(postings_dictionary.postings_list)
+    index_directory.write_review_ids(postings_dictionary)
     postings_dictionary = None
     gc.collect()
 

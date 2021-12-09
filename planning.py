@@ -42,7 +42,7 @@ _processor = DocumentProcessor()
 _processor.add_filter(filters.filter_tokens_by_length(3))
 
 start = time()
-for review in CostumerReviewReader("amazon_reviews_us_Digital_Video_Games_v1_00.tsv.gz"):
+for review in CostumerReviewReader("data/amazon_reviews_us_Digital_Video_Games_v1_00.tsv.gz"):
     processed_review = _processor.process(review)
 end = time()
 

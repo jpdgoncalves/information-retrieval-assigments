@@ -3,7 +3,7 @@ import time
 
 
 class MemoryChecker:
-    def __init__(self, threshold: float, call_control: int):
+    def __init__(self, threshold: float, call_control: int = 100):
         """
         Checks if memory has reached a certain threshold.
         Call to the has_reached_threshold only actually checks memory used
