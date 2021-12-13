@@ -1,18 +1,20 @@
-from typing import Callable, List
-from definitions import ReviewId
+from typing import List
+from definitions import Term, ReviewId
 
 from enum import Enum, auto
 
 import os
 import shutil
 
-from .blocks import BlockWriter
-from .segments import IndexSegmentsWriter
-
 
 class IndexCreationOptions(Enum):
     IF_EXISTS_ERROR = auto()
     IF_EXISTS_OVERWRITE = auto()
+
+
+def write_review_ids(review_ids_path: str, review_ids: List[ReviewId]):
+    with open(review_ids_path, "a", encoding="utf-8") as review_ids_file:
+        review_ids_file.writelines(review_ids)
 
 
 def _create_file(path: str):
@@ -24,13 +26,29 @@ class IndexDirectory:
     def __init__(
             self,
             index_path: str,
-            block_prefix: str = "block_"
+            block_prefix: str = "block_",
+            vocabulary_file_name: str = "vocabulary.txt",
+            postings_file_name: str = "postings.txt"
     ):
         self.index_path = index_path
         self.block_prefix = block_prefix
+        self.vocabulary_file_name = vocabulary_file_name
+        self.postings_file_name = postings_file_name
+
         self.review_ids_path = f"{index_path}/review_ids.txt"
-        self.blocks_dir_path = f"{index_path}/blocks/"
-        self.segments_dir_path = f"{index_path}/segments/"
+        self.blocks_dir_path = f"{index_path}/blocks"
+        self.segments_dir_path = f"{index_path}/segments"
+
+        self.block_paths: List[str] = []
+        self.segment_paths: List[str] = []
+
+    @property
+    def block_count(self):
+        return len(self.block_paths)
+
+    @property
+    def segment_count(self):
+        return len(self.segment_paths)
 
     def create(self, option: IndexCreationOptions = IndexCreationOptions.IF_EXISTS_ERROR):
         if os.path.exists(self.index_path):
@@ -47,24 +65,42 @@ class IndexDirectory:
         os.mkdir(self.blocks_dir_path)
         os.mkdir(self.segments_dir_path)
 
-    def block_writer(self):
-        if not os.path.isdir(self.blocks_dir_path):
-            raise NotADirectoryError(f"'{self.blocks_dir_path}' is not a directory")
+    def get_block_path(self):
+        """
+        Creates a new block path and adds it to the internal block paths list.
+        :return:
+        """
+        block_path = f"{self.blocks_dir_path}/{self.block_prefix}_{self.block_count}.txt"
+        self.block_paths.append(block_path)
+        return block_path
 
-        return BlockWriter(self.blocks_dir_path, self.block_prefix)
+    def get_temp_segment_paths(self):
+        """
+        Creates a new pair of segment paths. One for the vocabulary file and
+        another for the postings file.
+        :return:
+        """
+        temp_segment_dir = f"{self.segments_dir_path}/{self.segment_count}"
+        vocabulary_path = f"{temp_segment_dir}/{self.vocabulary_file_name}"
+        postings_path = f"{temp_segment_dir}/{self.postings_file_name}"
 
-    def segments_writer(self, segment_format: Callable):
-        return IndexSegmentsWriter(
-            self.segments_dir_path,
-            segment_format
-        )
+        return vocabulary_path, postings_path
 
-    def write_review_ids(self, review_ids: List[ReviewId]):
-        with open(self.review_ids_path, "w", encoding="utf-8") as review_ids_file:
-            review_ids_file.writelines(review_ids)
+    def rename_temp_segment(self, start_term: Term, end_term: Term, temp_segment_path: str):
+        """
+        Function to rename a temporary segment to its permanent name.
+        :param start_term:
+        :param end_term:
+        :param temp_segment_path:
+        :return:
+        """
+        segment_path = f"{self.segments_dir_path}/{start_term}-{end_term}"
+        os.rename(temp_segment_path, segment_path)
+        self.segment_paths.append(segment_path)
 
     def delete_blocks_dir(self):
         shutil.rmtree(self.blocks_dir_path)
+        self.block_paths = []
 
     def index_size(self):
         total_size = os.path.getsize(self.review_ids_path)

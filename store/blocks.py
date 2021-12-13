@@ -5,36 +5,16 @@ import heapq
 import pickle
 
 
-class BlockWriter:
-    """
-    Class with the functionality needed to write postings into
-    blocks. It uses pickle format for faster loading when reading.
-    """
-    def __init__(self, block_dir_path: str, block_prefix: str):
-        self.block_dir_path = block_dir_path
-        self.block_prefix = block_prefix
-        self.blocks_path_prefix = f"{block_dir_path}/{block_prefix}"
-        self.block_paths: List[str] = []
+def write_block(block_path: str, vocabulary: Vocabulary):
+    with open(block_path, "wb") as block_file:
+        print(f"[BlockWriter]: Writing {block_path}")
 
-    @property
-    def block_count(self):
-        return len(self.block_paths)
+        sorted_terms = sorted(vocabulary.keys())
 
-    def write(self, vocabulary: Vocabulary):
-        block_name = self._generate_block_name()
-        print(f"[BlockWriter]: Writing {block_name}")
+        for term in sorted_terms:
+            pickle.dump((term, vocabulary[term]), block_file, pickle.HIGHEST_PROTOCOL)
 
-        with open(block_name, "wb") as block_file:
-            sorted_terms = sorted(vocabulary.keys())
-
-            for term in sorted_terms:
-                pickle.dump((term, vocabulary[term]), block_file, pickle.HIGHEST_PROTOCOL)
-
-        self.block_paths.append(block_name)
-        print(f"[BlockWriter]: Finished writing {block_name}")
-
-    def _generate_block_name(self):
-        return f"{self.blocks_path_prefix}{self.block_count}.pickle"
+        print(f"[BlockWriter]: Finished writing {block_path}")
 
 
 class BlockFile:
