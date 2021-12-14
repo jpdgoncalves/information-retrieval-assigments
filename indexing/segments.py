@@ -29,8 +29,12 @@ class SegmentWriter:
 
         if self._last_term != term:
             if self._is_full:
-                _, vocab_path, postings_path = self.index_directory.make_segment_dir(self._first_term, self._last_term)
+                segment_path, vocab_path, postings_path = self.index_directory.make_segment_dir(
+                    self._first_term, self._last_term
+                )
+                print(f"[SegmentWriter] Writing segment {segment_path}")
                 self.segment_writer(vocab_path, postings_path, self._accumulated_entries)
+                print(f"[SegmentWriter] Finished writing {segment_path}")
                 self._accumulated_entries = []
 
             self._accumulated_entries.append(entry)

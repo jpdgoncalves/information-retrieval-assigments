@@ -6,12 +6,12 @@ class MemoryChecker:
     def __init__(self, threshold: float, call_control: int = 100):
         """
         Checks if memory has reached a certain threshold.
-        Call to the has_reached_threshold only actually checks memory used
-        every so often returning false the rest of the times. This
-        can be controlled by the 'call_control' parameter.
+        Calls to the has_reached_threshold only truly check memory used
+        every so often which results in false being returned in almost all of the calls.
+        This behavior can be controlled by the 'call_control' parameter.
         :param threshold: Memory Threshold
         :param call_control: Number of times that the has_reached_threshold needs
-        to be called before a check is actually performed.
+        to be called before a memory check is performed.
         """
         self._self_process = psutil.Process()
         self.threshold = threshold
