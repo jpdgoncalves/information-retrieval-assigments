@@ -1,3 +1,6 @@
+"""
+Module containing utility functions used during the indexing pipeline
+"""
 import filters
 from arguments import Arguments
 from definitions import SegmentWriteFormat
@@ -33,6 +36,13 @@ def get_review_processor(_arguments: Arguments):
 
 
 def merge_blocks(index_directory: IndexDirectory, segment_format: SegmentWriteFormat, _arguments: Arguments):
+    """
+    Utility function that merges the block files into the final index
+    :param index_directory:
+    :param segment_format:
+    :param _arguments:
+    :return:
+    """
     segment_writer = SegmentWriter(index_directory, segment_format)
 
     for entry in blocks_iterator(index_directory.block_paths):
