@@ -7,8 +7,7 @@ from definitions import IndexingStatistics
 from dictionary import tf_idf_dictionary
 from store import segments, index, blocks
 from utils import MemoryChecker
-from .processing import get_review_processor
-from .segments import SegmentWriter
+from .processing import get_review_processor, merge_blocks
 
 
 def create_index(_arguments: Arguments) -> IndexingStatistics:
@@ -45,19 +44,14 @@ def create_index(_arguments: Arguments) -> IndexingStatistics:
     gc.collect()
 
     segment_format = segments.tf_idf_format(review_count)
-    segment_writer = SegmentWriter(index_directory, segment_format)
 
-    for entry in blocks.blocks_iterator(index_directory.block_paths):
-        segment_writer.write(entry)
-    
-    if not _arguments.debug_mode:
-        index_directory.delete_blocks_dir()
+    term_count = merge_blocks(index_directory, segment_format, _arguments)
 
     index_end_time = time.time()
 
     return IndexingStatistics(
         index_end_time - index_start_time,
         index_directory.index_size(),
-        segment_writer.term_count,
+        term_count,
         index_directory.block_count
     )

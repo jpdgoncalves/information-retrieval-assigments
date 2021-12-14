@@ -7,14 +7,12 @@ from arguments import Arguments
 from corpus import CostumerReviewReader
 from definitions import IndexingStatistics
 from dictionary import term_count_dictionary
-from store import blocks
-from store import index
-from store import segments
-from .processing import get_review_processor
-from .segments import SegmentWriter
+from store import segments, index, blocks
+from .processing import get_review_processor, merge_blocks
 
 
 def create_index(_arguments: Arguments) -> IndexingStatistics:
+
     review_reader = CostumerReviewReader(_arguments.corpus_path)
     review_processor = get_review_processor(_arguments)
     postings_dictionary = term_count_dictionary()
@@ -32,6 +30,7 @@ def create_index(_arguments: Arguments) -> IndexingStatistics:
 
     for review in review_reader:
         processed_review = review_processor.process(review)
+        postings_dictionary.add_document(processed_review)
         document_lengths.append(processed_review.document_length)
 
         if memory_checker.has_reached_threshold():
@@ -55,19 +54,14 @@ def create_index(_arguments: Arguments) -> IndexingStatistics:
         _arguments.b,
         _arguments.k1
     )
-    segment_writer = SegmentWriter(index_directory, segment_format)
 
-    for entry in blocks.blocks_iterator(index_directory.block_paths):
-        segment_writer.write(entry)
-
-    if not _arguments.debug_mode:
-        index_directory.delete_blocks_dir()
+    term_count = merge_blocks(index_directory, segment_format, _arguments)
 
     index_end_time = time.time()
 
     return IndexingStatistics(
         index_end_time - index_start_time,
         index_directory.index_size(),
-        segment_writer.term_count,
+        term_count,
         index_directory.block_count
     )

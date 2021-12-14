@@ -1,6 +1,10 @@
-from arguments import Arguments
-from processor import ReviewProcessor
 import filters
+from arguments import Arguments
+from definitions import SegmentWriteFormat
+from processor import ReviewProcessor
+from store.blocks import blocks_iterator
+from store.index import IndexDirectory
+from .segments import SegmentWriter
 
 
 def get_review_processor(_arguments: Arguments):
@@ -26,3 +30,15 @@ def get_review_processor(_arguments: Arguments):
     )
 
     return review_processor
+
+
+def merge_blocks(index_directory: IndexDirectory, segment_format: SegmentWriteFormat, _arguments: Arguments):
+    segment_writer = SegmentWriter(index_directory, segment_format)
+
+    for entry in blocks_iterator(index_directory.block_paths):
+        segment_writer.write(entry)
+
+    if not _arguments.debug_mode:
+        index_directory.delete_blocks_dir()
+
+    return segment_writer.term_count
