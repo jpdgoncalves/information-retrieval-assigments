@@ -1,22 +1,20 @@
-from definitions import IndexingStatistics
-
-import time
 import gc
+import time
 
 from arguments import Arguments
 from corpus import CostumerReviewReader
+from definitions import IndexingStatistics
 from dictionary import tf_idf_dictionary
-from processor import DocumentProcessor
 from store import segments, index, blocks
 from utils import MemoryChecker
-
-import filters
+from .processing import get_review_processor
+from .segments import SegmentWriter
 
 
 def create_index(_arguments: Arguments) -> IndexingStatistics:
 
     review_reader = CostumerReviewReader(_arguments.corpus_path)
-    review_processor = DocumentProcessor()
+    review_processor = get_review_processor(_arguments)
     memory_checker = MemoryChecker(_arguments.memory_threshold)
     postings_dictionary = tf_idf_dictionary()
     index_directory = index.IndexDirectory(_arguments.index_path)
@@ -27,20 +25,6 @@ def create_index(_arguments: Arguments) -> IndexingStatistics:
         index_directory.create()
 
     review_count = 0
-
-    if _arguments.stopwords is not None:
-        review_processor.add_filter(
-            filters.filter_stopwords(_arguments.stopwords)
-        )
-
-    if _arguments.use_potter_stemmer:
-        review_processor.add_filter(
-            filters.stemmer("english")
-        )
-
-    review_processor.add_filter(
-        filters.filter_tokens_by_length(_arguments.min_token_length)
-    )
 
     index_start_time = time.time()
 
@@ -61,12 +45,10 @@ def create_index(_arguments: Arguments) -> IndexingStatistics:
     gc.collect()
 
     segment_format = segments.tf_idf_format(review_count)
-    segment_writer = index_directory.segments_writer(segment_format)
+    segment_writer = SegmentWriter(index_directory, segment_format)
 
     for entry in blocks.blocks_iterator(index_directory.block_paths):
         segment_writer.write(entry)
-
-    segment_writer.close()
     
     if not _arguments.debug_mode:
         index_directory.delete_blocks_dir()

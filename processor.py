@@ -12,7 +12,7 @@ import re
 regex_pattern = re.compile("[^a-z]")
 
 
-class DocumentProcessor:
+class ReviewProcessor:
     def __init__(self):
         self.processors: List[Processor] = []
 

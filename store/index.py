@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from definitions import Term, ReviewId
 
 from enum import Enum, auto
@@ -40,7 +40,7 @@ class IndexDirectory:
         self.segments_dir_path = f"{index_path}/segments"
 
         self.block_paths: List[str] = []
-        self.segment_paths: List[str] = []
+        self.segment_paths: List[Tuple[str, str, str]] = []
 
     @property
     def block_count(self):
@@ -74,29 +74,22 @@ class IndexDirectory:
         self.block_paths.append(block_path)
         return block_path
 
-    def get_temp_segment_paths(self):
+    def make_segment_dir(self, first_term: Term, last_term: Term):
         """
-        Creates a new pair of segment paths. One for the vocabulary file and
-        another for the postings file.
+        Creates a new a triple of segment paths as
+        (segment_path, vocabulary_path, postings_path)
         :return:
         """
-        temp_segment_dir = f"{self.segments_dir_path}/{self.segment_count}"
-        vocabulary_path = f"{temp_segment_dir}/{self.vocabulary_file_name}"
-        postings_path = f"{temp_segment_dir}/{self.postings_file_name}"
+        segment_dir = f"{self.segments_dir_path}/{first_term}-{last_term}"
 
-        return vocabulary_path, postings_path
+        os.mkdir(segment_dir)
 
-    def rename_temp_segment(self, start_term: Term, end_term: Term, temp_segment_path: str):
-        """
-        Function to rename a temporary segment to its permanent name.
-        :param start_term:
-        :param end_term:
-        :param temp_segment_path:
-        :return:
-        """
-        segment_path = f"{self.segments_dir_path}/{start_term}-{end_term}"
-        os.rename(temp_segment_path, segment_path)
-        self.segment_paths.append(segment_path)
+        vocabulary_path = f"{segment_dir}/{self.vocabulary_file_name}"
+        postings_path = f"{segment_dir}/{self.postings_file_name}"
+        result_paths = (segment_dir, vocabulary_path, postings_path)
+        self.segment_paths.append(result_paths)
+
+        return result_paths
 
     def delete_blocks_dir(self):
         shutil.rmtree(self.blocks_dir_path)

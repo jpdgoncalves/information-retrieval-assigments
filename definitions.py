@@ -1,4 +1,4 @@
-from typing import Iterable, DefaultDict, Tuple, List, Callable, TextIO, Dict
+from typing import Iterable, DefaultDict, Tuple, List, Callable, Dict
 
 from dataclasses import dataclass
 
@@ -54,4 +54,4 @@ TermPostingsEntry = Tuple[Term, Postings]
 
 Processor = Callable[[Iterable[str]], Iterable[str]]
 WeightFunction = Callable[[TermIndex], TermPostings]
-BlockVocabularyFormatter = Callable[[TextIO, Vocabulary], None]
+SegmentWriteFormat = Callable[[str, str, List[TermPostingsEntry]], None]

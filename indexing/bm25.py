@@ -1,24 +1,22 @@
-from definitions import IndexingStatistics
-
 import gc
 import statistics
 import time
 
+import utils
 from arguments import Arguments
 from corpus import CostumerReviewReader
+from definitions import IndexingStatistics
 from dictionary import term_count_dictionary
-from processor import DocumentProcessor
-from store import segments
 from store import blocks
 from store import index
-
-import filters
-import utils
+from store import segments
+from .processing import get_review_processor
+from .segments import SegmentWriter
 
 
 def create_index(_arguments: Arguments) -> IndexingStatistics:
     review_reader = CostumerReviewReader(_arguments.corpus_path)
-    review_processor = DocumentProcessor()
+    review_processor = get_review_processor(_arguments)
     postings_dictionary = term_count_dictionary()
     memory_checker = utils.MemoryChecker(_arguments.memory_threshold)
     index_directory = index.IndexDirectory(_arguments.index_path)
@@ -29,20 +27,6 @@ def create_index(_arguments: Arguments) -> IndexingStatistics:
         index_directory.create()
 
     document_lengths = []
-
-    if _arguments.stopwords is not None:
-        review_processor.add_filter(
-            filters.filter_stopwords(_arguments.stopwords)
-        )
-
-    if _arguments.use_potter_stemmer:
-        review_processor.add_filter(
-            filters.stemmer("english")
-        )
-
-    review_processor.add_filter(
-        filters.filter_tokens_by_length(_arguments.min_token_length)
-    )
 
     index_start_time = time.time()
 
@@ -71,12 +55,10 @@ def create_index(_arguments: Arguments) -> IndexingStatistics:
         _arguments.b,
         _arguments.k1
     )
-    segment_writer = index_directory.segments_writer(segment_format)
+    segment_writer = SegmentWriter(index_directory, segment_format)
 
     for entry in blocks.blocks_iterator(index_directory.block_paths):
         segment_writer.write(entry)
-
-    segment_writer.close()
 
     if not _arguments.debug_mode:
         index_directory.delete_blocks_dir()

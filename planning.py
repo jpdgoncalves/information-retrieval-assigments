@@ -34,11 +34,11 @@ statistics;
 from time import time
 
 from corpus import CostumerReviewReader
-from processor import DocumentProcessor
+from processor import ReviewProcessor
 
 import filters
 
-_processor = DocumentProcessor()
+_processor = ReviewProcessor()
 _processor.add_filter(filters.filter_tokens_by_length(3))
 
 start = time()
