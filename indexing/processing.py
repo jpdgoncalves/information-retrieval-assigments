@@ -37,7 +37,7 @@ def get_review_processor(_arguments: Arguments):
 
 def merge_blocks(index_directory: IndexDirectory, segment_format: SegmentWriteFormat, _arguments: Arguments):
     """
-    Utility function that merges the block files into the final index
+    Utility function that merges the block files into the final index.
     :param index_directory:
     :param segment_format:
     :param _arguments:
