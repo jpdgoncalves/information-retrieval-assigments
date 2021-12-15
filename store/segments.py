@@ -59,8 +59,9 @@ def _write_tf_idf_segment(
                 prev_doc_id = doc_id
 
             writen_bytes += postings_file.write(bytes(';'.join(postings_portions), encoding="utf-8"))
+            writen_bytes += postings_file.write(b"\n")
 
-            vocab_file.write(f"{term}:{idf}:{offset}:{writen_bytes}")
+            vocab_file.write(f"{term}:{idf}:{offset}:{writen_bytes}\n")
             offset += writen_bytes
 
 
@@ -94,5 +95,6 @@ def _write_bm25_segment(
                 prev_doc_id = doc_id
 
             writen_bytes += postings_file.write(bytes(';'.join(postings_portions), encoding="utf-8"))
-            vocab_file.write(f"{term}:{idf}:{offset}:{writen_bytes}")
+            writen_bytes += postings_file.write(b"\n")
+            vocab_file.write(f"{term}:{idf}:{offset}:{writen_bytes}\n")
             offset += writen_bytes

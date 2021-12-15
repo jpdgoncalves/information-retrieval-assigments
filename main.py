@@ -22,7 +22,7 @@ def main():
         indexing_statistics = bm25.create_index(_arguments)
 
     print(f"Indexing time: {utils.format_time_interval(indexing_statistics.indexing_time)}")
-    print(f"Index size: {indexing_statistics.index_size_on_disk / 1024 / 1024}MB")
+    print(f"Index size: {indexing_statistics.index_size_on_disk / 1024 / 1024} MB")
     print(f"Temporary Blocks Used: {indexing_statistics.blocks_used}")
     print(f"Term Count: {indexing_statistics.term_count}")
 

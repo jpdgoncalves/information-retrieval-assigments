@@ -59,7 +59,7 @@ default_arguments = {
     "stopwords": _read_stopwords_file("stopwords.txt"),
     "use_potter_stemmer": True,
     "memory_threshold": 0.5,
-    "index_path": "index",
+    "index_path": "segmented_index",
     "indexing_format": IndexingFormat.TF_IDF,
     "debug_mode": False,
     "k1": 1.2,

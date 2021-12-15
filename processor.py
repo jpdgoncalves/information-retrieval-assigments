@@ -24,7 +24,7 @@ class ReviewProcessor:
         they were added and returns the final ProcessedDocument instance at the end.
         """
         content = regex_pattern.sub(" ", costumer_review.content)
-        words = [word for word in content.split(" ") if len(word) > 0]
+        words = (word for word in content.split(" ") if 0 < len(word) < 50)
 
         for processor in self.processors:
             words = processor(words)

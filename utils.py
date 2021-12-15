@@ -29,7 +29,7 @@ class MemoryChecker:
         used_memory = self._self_process.memory_info().vms
         total_memory = psutil.virtual_memory().total
 
-        return (used_memory / total_memory) < self.threshold
+        return (used_memory / total_memory) > self.threshold
 
 
 def format_time_interval(time_stamp):

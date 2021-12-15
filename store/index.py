@@ -26,7 +26,7 @@ class IndexDirectory:
     def __init__(
             self,
             index_path: str,
-            block_prefix: str = "block_",
+            block_prefix: str = "block",
             vocabulary_file_name: str = "vocabulary.txt",
             postings_file_name: str = "postings.txt"
     ):
@@ -58,6 +58,7 @@ class IndexDirectory:
                 IndexCreationOptions.IF_EXISTS_OVERWRITE on the option parameter to overwrite 
                 the directory""")
             else:
+                print(f"[IndexDirectory] Deleting index '{self.index_path}'")
                 shutil.rmtree(self.index_path)
 
         os.mkdir(self.index_path)
@@ -70,7 +71,7 @@ class IndexDirectory:
         Creates a new block path and adds it to the internal block paths list.
         :return:
         """
-        block_path = f"{self.blocks_dir_path}/{self.block_prefix}_{self.block_count}.txt"
+        block_path = f"{self.blocks_dir_path}/{self.block_prefix}_{self.block_count}.pickle"
         self.block_paths.append(block_path)
         return block_path
 
@@ -100,6 +101,6 @@ class IndexDirectory:
 
         for segment_path in os.listdir(self.segments_dir_path):
             for file_path in os.listdir(f"{self.segments_dir_path}/{segment_path}"):
-                total_size = os.path.getsize(f"{self.segments_dir_path}/{segment_path}/{file_path}")
+                total_size += os.path.getsize(f"{self.segments_dir_path}/{segment_path}/{file_path}")
 
         return total_size

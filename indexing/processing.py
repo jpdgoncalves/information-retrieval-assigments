@@ -97,6 +97,8 @@ def merge_blocks(index_directory: IndexDirectory, segment_format: SegmentWriteFo
     for entry in blocks_iterator(index_directory.block_paths):
         segment_writer.write(entry)
 
+    segment_writer.flush()
+
     if not _arguments.debug_mode:
         index_directory.delete_blocks_dir()
 

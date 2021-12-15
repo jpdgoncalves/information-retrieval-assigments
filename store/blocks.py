@@ -44,7 +44,10 @@ class BlockFile:
 
     # noinspection PyProtectedMember
     def __lt__(self, other):
-        return self._next_entry[0] < other._next_entry[0] or self._next_entry[1][0][0] < other._next_entry[1][0][0]
+        return self._next_entry[0] < other._next_entry[0]
+
+    def __repr__(self):
+        return f"{self._next_entry[0]}"
 
 
 def blocks_iterator(block_names: List[str]) -> Generator[TermPostingsEntry, None, None]:
@@ -52,6 +55,7 @@ def blocks_iterator(block_names: List[str]) -> Generator[TermPostingsEntry, None
     heapq.heapify(block_files)
 
     while len(block_files) != 0:
+        # print(block_files)
         block_file = heapq.heappop(block_files)
         entry = block_file.read()
 
