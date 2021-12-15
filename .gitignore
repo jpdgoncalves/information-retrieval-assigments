@@ -2,6 +2,7 @@ venv/
 *.tsv.gz
 /.idea/
 index/
+segmented_index/
 block_*.txt
-planning.py
+testing.py
 planning.txt
