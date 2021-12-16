@@ -25,6 +25,7 @@ def main():
     print(f"Index size: {indexing_statistics.index_size_on_disk / 1024 / 1024} MB")
     print(f"Temporary Blocks Used: {indexing_statistics.blocks_used}")
     print(f"Term Count: {indexing_statistics.term_count}")
+    print(f"Review Count: {indexing_statistics.review_count}")
 
 
 # load_end_time = time.time()

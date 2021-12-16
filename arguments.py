@@ -3,7 +3,7 @@ This module handles the parsing of the command arguments into an instance
 of Arguments. This instance intends to provide type hints which we wouldn't
 get if we returned the original Namespace object from argparse module.
 """
-from typing import Optional, Set
+from typing import Set
 
 from argparse import ArgumentParser
 from dataclasses import dataclass
@@ -18,8 +18,8 @@ class IndexingFormat(Enum):
 @dataclass
 class Arguments:
     corpus_path: str
-    min_token_length: Optional[int]
-    stopwords: Optional[Set[str]]
+    min_token_length: int
+    stopwords: Set[str]
     use_potter_stemmer: bool
     memory_threshold: float
     index_path: str
@@ -81,7 +81,7 @@ arg_parser.add_argument(
     "-nmtl", "--no-min-token-len",
     dest="min_token_length",
     action="store_const",
-    const=None
+    const=0
 )
 
 # Stopwords List Handling
@@ -96,7 +96,7 @@ arg_parser.add_argument(
     "-nsw", "--no-stopwords",
     dest="stopwords",
     action="store_const",
-    const=None
+    const=set()
 )
 
 # Use of Potter Stemmer Handling

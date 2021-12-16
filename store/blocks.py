@@ -22,7 +22,7 @@ class BlockFile:
     def __init__(self, block_path: str):
         self.block_path = block_path
         self.block_file = open(block_path, "rb")
-        self._next_entry = self._read_one()
+        self._next_entry: TermPostingsEntry = self._read_one()
 
     def _read_one(self) -> Optional[TermPostingsEntry]:
         try:
@@ -44,7 +44,12 @@ class BlockFile:
 
     # noinspection PyProtectedMember
     def __lt__(self, other):
-        return self._next_entry[0] < other._next_entry[0]
+        this_term = self._next_entry[0]
+        other_term = other._next_entry[0]
+        this_first_doc_id = self._next_entry[1][0][0]
+        other_first_doc_id = other._next_entry[1][0][0]
+
+        return (this_term, this_first_doc_id) < (other_term, other_first_doc_id)
 
     def __repr__(self):
         return f"{self._next_entry[0]}"
