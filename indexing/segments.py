@@ -11,6 +11,8 @@ from store.index import IndexDirectory
 
 
 class SegmentWriter:
+    # For some reason I am duplicating the entries
+    # Need to fix that
     def __init__(
             self,
             index_directory: IndexDirectory,
@@ -31,7 +33,7 @@ class SegmentWriter:
             if self._is_full:
                 self._write()
 
-            self._accumulated_entries.append(entry)
+            self._accumulated_entries.append((term, []))
             self.term_count += 1
 
         self._last_postings.extend(postings)

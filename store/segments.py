@@ -42,13 +42,14 @@ def _write_tf_idf_segment(
         review_count: int
 ):
     with open(vocab_path, "w", encoding="utf-8") as vocab_file, \
-         open(postings_path, "wb") as postings_file:
+            open(postings_path, "w", encoding="utf-8", newline="\n") as postings_file:
 
         offset = 0
+        postings_entries = []
+        vocabulary_entries = []
 
         for term, postings in entries:
             postings_portions = []
-            writen_bytes = 0
             prev_doc_id = 0
             idf = math.log10(review_count / len(postings))
 
@@ -58,11 +59,17 @@ def _write_tf_idf_segment(
                 )
                 prev_doc_id = doc_id
 
-            writen_bytes += postings_file.write(bytes(';'.join(postings_portions), encoding="utf-8"))
-            writen_bytes += postings_file.write(b"\n")
+            posting_entry = ";".join(postings_portions)
+            byte_len = len(posting_entry.encode("utf-8")) + 1  # needed for the \n
+            vocab_entry = f"{term}:{idf}:{offset}:{byte_len}"
 
-            vocab_file.write(f"{term}:{idf}:{offset}:{writen_bytes}\n")
-            offset += writen_bytes
+            postings_entries.append(posting_entry)
+            vocabulary_entries.append(vocab_entry)
+
+            offset += byte_len
+
+        postings_file.writelines(postings_entries)
+        vocab_file.writelines(vocabulary_entries)
 
 
 def _write_bm25_segment(
@@ -76,7 +83,7 @@ def _write_bm25_segment(
         k1: float
 ):
     with open(vocab_path, "w", encoding="utf-8") as vocab_file, \
-         open(postings_path, "wb") as postings_file:
+            open(postings_path, "wb") as postings_file:
 
         offset = 0
 

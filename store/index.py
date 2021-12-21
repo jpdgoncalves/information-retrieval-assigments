@@ -53,10 +53,7 @@ class IndexDirectory:
     def create(self, option: IndexCreationOptions = IndexCreationOptions.IF_EXISTS_ERROR):
         if os.path.exists(self.index_path):
             if option is IndexCreationOptions.IF_EXISTS_ERROR:
-                raise IsADirectoryError(f"""'{self.index_path}' already exists as a directory. Choose another
-                path for the index, delete the existing directory or pass 
-                IndexCreationOptions.IF_EXISTS_OVERWRITE on the option parameter to overwrite 
-                the directory""")
+                raise IsADirectoryError(f"'{self.index_path}' already exists as a directory.")
             else:
                 print(f"[IndexDirectory] Deleting index '{self.index_path}'")
                 shutil.rmtree(self.index_path)

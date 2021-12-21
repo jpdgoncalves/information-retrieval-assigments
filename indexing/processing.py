@@ -51,7 +51,7 @@ def index_reviews(
     postings_dictionary = None
     collect_garbage()
 
-    print("[processing]: Done.")
+    print("[processing]: Done indexing.")
     return document_lengths
 
 
@@ -74,7 +74,7 @@ def merge_blocks(index_directory: IndexDirectory, segment_format: SegmentWriteFo
     if not debug_mode:
         index_directory.delete_blocks_dir()
 
-    print("[processing]: Done.")
+    print("[processing]: Done merging.")
     return segment_writer.term_count
 
 
