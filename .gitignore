@@ -6,4 +6,4 @@ segmented_index/
 block_*.txt
 testing.py
 planning.txt
-log.txt
+data/
