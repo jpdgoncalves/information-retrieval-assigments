@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from definitions import Term, ReviewId
+from definitions import Term
 
 from enum import Enum, auto
 
@@ -10,11 +10,6 @@ import shutil
 class IndexCreationOptions(Enum):
     IF_EXISTS_ERROR = auto()
     IF_EXISTS_OVERWRITE = auto()
-
-
-def write_review_ids(review_ids_path: str, review_ids: List[ReviewId]):
-    with open(review_ids_path, "a", encoding="utf-8") as review_ids_file:
-        review_ids_file.writelines(review_ids)
 
 
 def _create_file(path: str):
