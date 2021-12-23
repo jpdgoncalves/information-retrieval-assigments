@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import (
-    Iterable, DefaultDict, Tuple,
+    DefaultDict, Tuple,
     List, Callable, Dict, Generator
 )
 
@@ -18,12 +18,11 @@ ReviewId = str
 DocId = int
 Weight = float
 Position = int
-DocLength = int
+Length = int
 Term = str
 
 RawReview = Tuple[DocId, ReviewId, str]
 Token = Tuple[Term, Position]
-ProcessedReview = Tuple[DocId, ReviewId, Iterable[Token], DocLength]
 
 Posting = Tuple[Weight, List[Position]]
 Postings = List[Tuple[DocId, Posting]]
@@ -32,7 +31,21 @@ TermIndex = Dict[Term, List[Position]]
 TermPostings = Dict[Term, Posting]
 TermPostingsEntry = Tuple[Term, Postings]
 
+ProcessedReview = Tuple[DocId, ReviewId, TermPostings, Length]
+ProcessedQuery = Tuple[Length, TermIndex]
+
 RawReviewReader = Generator[RawReview, None, None]
+StemmerFunction = Callable[[str], str]
 Processor = Callable[[RawReview], ProcessedReview]
 WeightFunction = Callable[[TermIndex], TermPostings]
 SegmentWriteFormat = Callable[[str, str, List[TermPostingsEntry]], None]
+
+Path = str
+Idf = float
+Offset = int
+PostingLen = int
+
+Segment = Tuple[Term, Term, Path]
+IdfMetadata = Tuple[Path, Idf, Offset, PostingLen]
+BM25Metadata = Tuple[Path, Offset, PostingLen]
+PostingResults = List[Tuple[DocId, Weight, List[Position]]]
