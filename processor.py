@@ -49,14 +49,6 @@ def review_processor(
     return process_review
 
 
-def english_stemmer(word: str):
-    return _stemmer.stemWord(word)
-
-
-def no_stemmer(word: str):
-    return word
-
-
 def process_str(
         content: str,
         min_token_len: int,
@@ -121,3 +113,11 @@ def count_term_index(term_index: TermIndex) -> TermPostings:
         postings[term] = (len(positions), positions)
 
     return postings
+
+
+def english_stemmer(word: str):
+    return _stemmer.stemWord(word)
+
+
+def no_stemmer(word: str):
+    return word

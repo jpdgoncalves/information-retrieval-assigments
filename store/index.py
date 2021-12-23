@@ -31,6 +31,7 @@ class IndexDirectory:
         self.postings_file_name = postings_file_name
 
         self.review_ids_path = f"{index_path}/review_ids.txt"
+        self.idx_props_path = f"{index_path}/properties.json"
         self.blocks_dir_path = f"{index_path}/blocks"
         self.segments_dir_path = f"{index_path}/segments"
 
@@ -55,6 +56,7 @@ class IndexDirectory:
 
         os.mkdir(self.index_path)
         _create_file(self.review_ids_path)
+        _create_file(self.idx_props_path)
         os.mkdir(self.blocks_dir_path)
         os.mkdir(self.segments_dir_path)
 
@@ -89,6 +91,10 @@ class IndexDirectory:
         self.block_paths = []
 
     def index_size(self):
+        """
+        Index size on disk without the size of the properties file
+        :return:
+        """
         total_size = os.path.getsize(self.review_ids_path)
 
         for segment_path in os.listdir(self.segments_dir_path):

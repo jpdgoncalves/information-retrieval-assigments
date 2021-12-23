@@ -2,12 +2,26 @@ from typing import List, Set, Dict
 from collections import defaultdict
 
 from definitions import (
-    Segment, StemmerFunction
+    Segment, StemmerFunction, IndexingFormat
 )
 import processor
 from store.postings import read_postings
 from store.reviews import review_id_reader
 from store.vocabulary import tf_idf_metadata_reader, bm25_metadata_reader
+
+
+def get_searcher(
+        idx_format: IndexingFormat,
+        min_token_length: int,
+        stopwords: Set[str],
+        stemmer: StemmerFunction,
+        segments: List[Segment],
+        review_ids_path: str
+):
+    if idx_format is IndexingFormat.TF_IDF:
+        return tf_idf_searcher(min_token_length, stopwords, stemmer, segments, review_ids_path)
+    else:
+        return bm25_searcher(min_token_length, stopwords, stemmer, segments, review_ids_path)
 
 
 def tf_idf_searcher(
@@ -20,6 +34,7 @@ def tf_idf_searcher(
     process_query = processor.query_processor(min_token_length, stopwords, stemmer)
     read_tf_idf_meta = tf_idf_metadata_reader(segments)
     retrieve_review_ids = _review_ids_retriever(review_ids_path)
+    results_limit = 100
 
     def search(query: str):
         _, term_index = process_query(query)
@@ -43,7 +58,7 @@ def tf_idf_searcher(
             for doc_id, doc_weight, _ in postings:
                 scores[doc_id] += term_weight * doc_weight
 
-        return retrieve_review_ids(scores)
+        return retrieve_review_ids(scores, results_limit)
 
     return search
 
@@ -58,6 +73,7 @@ def bm25_searcher(
     process_query = processor.query_processor(min_token_length, stopwords, stemmer)
     read_bm25_meta = bm25_metadata_reader(segments)
     retrieve_review_ids = _review_ids_retriever(review_ids_path)
+    results_limit = 100
 
     def search(query: str):
         _, term_index = process_query(query)
@@ -75,7 +91,7 @@ def bm25_searcher(
             for doc_id, doc_weight, _ in postings:
                 scores[doc_id] += doc_weight
 
-        return retrieve_review_ids(scores)
+        return retrieve_review_ids(scores, results_limit)
 
     return search
 
@@ -83,8 +99,11 @@ def bm25_searcher(
 def _review_ids_retriever(review_ids_path: str):
     read_review_id = review_id_reader(review_ids_path)
 
-    def _retrieve_with_scores(scores: Dict[int, float]):
-        sorted_doc_ids = sorted((score, doc_id) for doc_id, score in scores.items())
+    def _retrieve_with_scores(scores: Dict[int, float], results_limit: int):
+        sorted_doc_ids = sorted(
+            ((score, doc_id) for doc_id, score in scores.items()),
+            reverse=True
+        )[:results_limit]
 
         with open(review_ids_path, "rb") as review_ids_file:
             search_results = [(read_review_id(review_ids_file, doc_id), score) for score, doc_id in sorted_doc_ids]

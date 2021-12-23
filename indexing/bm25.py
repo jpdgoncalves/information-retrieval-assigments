@@ -6,17 +6,18 @@ import utils
 from arguments import Arguments
 from corpus import raw_review_reader
 from definitions import IndexingStatistics
-from store import segments, index
+from store import segments, index, idxprops
 from .processing import merge_blocks, index_reviews
 
 
 def create_index(_arguments: Arguments) -> IndexingStatistics:
 
     review_reader = raw_review_reader(_arguments.corpus_path)
+    stemmer = processor.english_stemmer if _arguments.use_potter_stemmer else processor.no_stemmer
     review_processor = processor.review_processor(
         _arguments.min_token_length,
         _arguments.stopwords,
-        processor.english_stemmer if _arguments.use_potter_stemmer else processor.no_stemmer,
+        stemmer,
         processor.count_term_index
     )
     memory_checker = utils.MemoryChecker(_arguments.memory_threshold)
@@ -46,12 +47,24 @@ def create_index(_arguments: Arguments) -> IndexingStatistics:
     )
 
     term_count = merge_blocks(index_directory, segment_format, _arguments.debug_mode)
+    index_size = index_directory.index_size()
+
+    idxprops.write_props(
+        index_directory.idx_props_path,
+        _arguments.indexing_format,
+        index_size,
+        term_count,
+        review_count,
+        _arguments.min_token_length,
+        _arguments.stopwords,
+        stemmer
+    )
 
     index_end_time = time.time()
 
     return IndexingStatistics(
         index_end_time - index_start_time,
-        index_directory.index_size(),
+        index_size,
         term_count,
         review_count,
         index_directory.block_count

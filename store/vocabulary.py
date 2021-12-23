@@ -5,9 +5,9 @@ from definitions import Segment, Term, BM25Metadata, IdfMetadata, Path
 
 def bm25_metadata_reader(segments: List[Segment]):
     def read(term: Term) -> Optional[BM25Metadata]:
-        print(f"[searching]: Searching for term '{term}'")
+        # print(f"[vocabulary]: Searching for term '{term}'")
         metadata = _get_metadata(segments, term)
-        print(f"[searching] Found metadata {metadata}")
+        # print(f"[vocabulary] Found metadata {metadata}")
 
         if metadata is None:
             return None
@@ -22,9 +22,9 @@ def bm25_metadata_reader(segments: List[Segment]):
 
 def tf_idf_metadata_reader(segments: List[Segment]):
     def read(term: Term) -> Optional[IdfMetadata]:
-        print(f"[searching]: Searching for term '{term}'")
+        # print(f"[vocabulary]: Searching for term '{term}'")
         metadata = _get_metadata(segments, term)
-        print(f"[searching] Found metadata {metadata}")
+        # print(f"[vocabulary] Found metadata {metadata}")
 
         if metadata is None:
             return None
@@ -40,7 +40,7 @@ def tf_idf_metadata_reader(segments: List[Segment]):
 
 def _get_metadata(segments: List[Segment], term: Term) -> Optional[Tuple[Path, str]]:
     segment_path = _find_segment(segments, term)
-    print(f"[searching]: Found segment '{segment_path}'")
+    # print(f"[vocabulary]: Found segment '{segment_path}'")
 
     if segment_path is None:
         return None
@@ -82,7 +82,7 @@ def _find_segment(segments: List[Segment], term: Term) -> Optional[Path]:
     return None
 
 
-def _find_metadata(vocabulary_entries: List[List[Term, str]], term: Term) -> Optional[str]:
+def _find_metadata(vocabulary_entries: List[Tuple[Term, str]], term: Term) -> Optional[str]:
     """
     Taking an ordered list of terms and a term to search
     this function returns the metadata of the term in the vocabulary

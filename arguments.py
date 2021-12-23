@@ -3,16 +3,13 @@ This module handles the parsing of the command arguments into an instance
 of Arguments. This instance intends to provide type hints which we wouldn't
 get if we returned the original Namespace object from argparse module.
 """
+import os
 from typing import Set
 
 from argparse import ArgumentParser
 from dataclasses import dataclass
-from enum import Enum
 
-
-class IndexingFormat(Enum):
-    TF_IDF = "tf_idf"
-    BM25 = "bm25"
+from definitions import IndexingFormat
 
 
 @dataclass
@@ -27,6 +24,8 @@ class Arguments:
     debug_mode: bool
     k1: float
     b: float
+    queries_path: str
+    results_path: str
 
 
 def _positive_int(value_str: str) -> int:
@@ -47,11 +46,18 @@ def _float_between_zero_and_one(value_str: str) -> float:
 
 def _read_stopwords_file(file_path: str) -> Set[str]:
     stopwords = set()
-    with open(file_path, encoding="utf-8") as sw_file:
+    with open(_existing_path(file_path), encoding="utf-8") as sw_file:
         for word in sw_file:
             stopwords.add(word.strip())
 
     return stopwords
+
+
+def _existing_path(file_path: str) -> str:
+    if not os.path.isfile(file_path):
+        raise FileNotFoundError(f"{file_path} is not a file")
+
+    return file_path
 
 
 default_arguments = {
@@ -63,7 +69,10 @@ default_arguments = {
     "indexing_format": IndexingFormat.TF_IDF,
     "debug_mode": False,
     "k1": 1.2,
-    "b": 0.75
+    "b": 0.75,
+    "corpus_path": "amazon_reviews_us_Digital_Video_Games_v1_00.tsv.gz",
+    "queries_path": "queries.txt",
+    "results_path": "results.txt"
 }
 
 arg_parser = ArgumentParser(
@@ -116,7 +125,7 @@ arg_parser.add_argument(
 
 # Handling index path
 arg_parser.add_argument(
-    "-o", "--index-path",
+    "-out", "--index-path",
     dest="index_path",
     default=default_arguments["index_path"]
 )
@@ -155,7 +164,25 @@ arg_parser.add_argument(
 
 # Handling corpus path
 arg_parser.add_argument(
-    "corpus_path"
+    "-in", "--corpus-path",
+    dest="corpus_path",
+    type=_existing_path,
+    default=default_arguments["corpus_path"]
+)
+
+# Handling queries path
+arg_parser.add_argument(
+    "-qp", "--queries-path",
+    dest="queries_path",
+    type=_existing_path,
+    default=default_arguments["queries_path"]
+)
+
+# Handling results path
+arg_parser.add_argument(
+    "-rp", "--results-path",
+    dest="results_path",
+    default=default_arguments["results_path"]
 )
 
 
@@ -174,7 +201,9 @@ def get_arguments():
         arg_values.indexing_format,
         arg_values.debug_mode,
         arg_values.k1,
-        arg_values.b
+        arg_values.b,
+        arg_values.queries_path,
+        arg_values.results_path
     )
 
 
@@ -188,3 +217,5 @@ def print_arguments(_arguments: Arguments):
     print(f"Indexing Format: {_arguments.indexing_format.value}")
     print(f"BM25 Parameters: k1={_arguments.k1} b={_arguments.b}")
     print(f"Debug Mode: {'Yes' if _arguments.debug_mode else 'No'}")
+    print(f"Queries Path: {_arguments.queries_path}")
+    print(f"Results Path: {_arguments.results_path}")
