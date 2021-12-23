@@ -4,7 +4,6 @@ import processor
 from arguments import Arguments
 from corpus import raw_review_reader
 from definitions import IndexingStatistics
-from dictionary import tf_idf_dictionary
 from store import segments, index
 from utils import MemoryChecker
 from .processing import merge_blocks, index_reviews
@@ -16,7 +15,8 @@ def create_index(_arguments: Arguments) -> IndexingStatistics:
     review_processor = processor.review_processor(
         _arguments.min_token_length,
         _arguments.stopwords,
-        processor.english_stemmer if _arguments.use_potter_stemmer else processor.no_stemmer
+        processor.english_stemmer if _arguments.use_potter_stemmer else processor.no_stemmer,
+        processor.normalized_tf_term_index
     )
     memory_checker = MemoryChecker(_arguments.memory_threshold)
     index_directory = index.IndexDirectory(_arguments.index_path)
@@ -29,7 +29,7 @@ def create_index(_arguments: Arguments) -> IndexingStatistics:
     index_start_time = time.time()
 
     document_lengths = index_reviews(
-        review_reader, review_processor, tf_idf_dictionary,
+        review_reader, review_processor,
         index_directory, memory_checker
     )
     review_count = len(document_lengths)

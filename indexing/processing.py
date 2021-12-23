@@ -2,11 +2,11 @@
 Module containing utility functions used during the indexing pipeline.
 """
 import gc
-from typing import Callable
 
+import store.reviews
 from definitions import SegmentWriteFormat, Processor, RawReviewReader
 from dictionary import PostingsDictionary
-from store import blocks, index
+from store import blocks
 from store.blocks import blocks_iterator
 from store.index import IndexDirectory
 from utils import MemoryChecker
@@ -16,7 +16,6 @@ from .segments import SegmentWriter
 def index_reviews(
         review_reader: RawReviewReader,
         review_processor: Processor,
-        dictionary_constructor: Callable[[], PostingsDictionary],
         index_directory: IndexDirectory,
         memory_checker: MemoryChecker
 ):
@@ -25,13 +24,12 @@ def index_reviews(
     into blocks using the SPIMI algorithm.
     :param review_reader:
     :param review_processor:
-    :param dictionary_constructor:
     :param index_directory:
     :param memory_checker:
     :return:
     """
     print("[processing]: Indexing reviews into blocks.")
-    postings_dictionary = dictionary_constructor()
+    postings_dictionary = PostingsDictionary()
     document_lengths = []
 
     for review in review_reader:
@@ -42,12 +40,12 @@ def index_reviews(
 
         if memory_checker.has_reached_threshold():
             blocks.write_block(index_directory.get_block_path(), postings_dictionary.postings_list)
-            index.write_review_ids(index_directory.review_ids_path, postings_dictionary.review_ids)
-            postings_dictionary = dictionary_constructor()
+            store.reviews.write_review_ids(index_directory.review_ids_path, postings_dictionary.review_ids)
+            postings_dictionary = PostingsDictionary()
             collect_garbage()
 
     blocks.write_block(index_directory.get_block_path(), postings_dictionary.postings_list)
-    index.write_review_ids(index_directory.review_ids_path, postings_dictionary.review_ids)
+    store.reviews.write_review_ids(index_directory.review_ids_path, postings_dictionary.review_ids)
     postings_dictionary = None
     collect_garbage()
 
