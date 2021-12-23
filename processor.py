@@ -4,11 +4,11 @@ Module containing the DocumentProcessor.
 import math
 import Stemmer
 from collections import defaultdict
-from typing import Set, Callable, List
+from typing import Set, Callable, List, Dict
 
 from definitions import (
-    RawReview, ProcessedReview, ProcessedQuery,
-    TermIndex, TermPostings, WeightFunction
+    RawReview, ProcessedReview, ProcessedQuery, Term, Idf,
+    TermIndex, TermPostings, WeightFunction, StemmerFunction
 )
 
 import re
@@ -34,7 +34,7 @@ def query_processor(
 def review_processor(
         min_token_len: int,
         stopwords: Set[str],
-        stemmer: Callable[[str], str],
+        stemmer: StemmerFunction,
         weight_function: WeightFunction
 ):
     def process_review(raw_review: RawReview) -> ProcessedReview:
@@ -76,20 +76,42 @@ def aggregate(words: List[str]) -> TermIndex:
     return count_dict
 
 
-# noinspection PyTypeChecker
-def normalized_tf_idf_term_index(term_index: TermIndex) -> TermPostings:
+def tf_term_index(term_index: TermIndex) -> TermPostings:
     postings = {}
 
     for term, positions in term_index.items():
-        postings[term] = 1 + math.log10(len(positions))
-
-    total_squared_score = sum(score ** 2 for score in postings.values())
-    score_normalizer = math.sqrt(total_squared_score)
-
-    for term, positions in term_index.items():
-        postings[term] = (postings[term] / score_normalizer, positions)
+        postings[term] = (1 + math.log10(len(positions)), positions)
 
     return postings
+
+
+def normalize_term_postings(term_postings: TermPostings) -> TermPostings:
+    normalized_postings = {}
+
+    total_squared_score = sum(score ** 2 for score, _ in term_postings.values())
+    score_normalizer = math.sqrt(total_squared_score)
+
+    for term, (score, positions) in term_postings.items():
+        normalized_postings[term] = (score / score_normalizer, positions)
+
+    return normalized_postings
+
+
+def normalized_tf_term_index(term_index: TermIndex) -> TermPostings:
+    return normalize_term_postings(tf_term_index(term_index))
+
+
+def normalized_tf_idf_term_index(
+        term_index: TermIndex,
+        term_idfs: Dict[Term, Idf]
+) -> TermPostings:
+    tf_postings = tf_term_index(term_index)
+    tf_idf_postings = {}
+
+    for term, (score, positions) in tf_postings.items():
+        tf_idf_postings[term] = (term_idfs[term] * score, positions)
+
+    return normalize_term_postings(tf_idf_postings)
 
 
 def count_term_index(term_index: TermIndex) -> TermPostings:
