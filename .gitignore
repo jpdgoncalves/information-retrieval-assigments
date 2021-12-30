@@ -7,3 +7,4 @@ testing.py
 planning.txt
 data/
 results/results.txt
+*.pclprof
