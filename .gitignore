@@ -6,5 +6,5 @@ block_*.txt
 testing.py
 planning.txt
 data/
-results/results.txt
+results.txt
 *.pclprof
