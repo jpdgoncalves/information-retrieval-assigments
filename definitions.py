@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import (
     DefaultDict, Tuple, Set, TypedDict,
-    List, Callable, Dict, Generator
+    List, Callable, Dict, Generator, Iterable
 )
 
 
@@ -55,7 +55,7 @@ PostingLen = int
 Segment = Tuple[Term, Term, Path]
 IdfMetadata = Tuple[Path, Idf, Offset, PostingLen]
 BM25Metadata = Tuple[Path, Offset, PostingLen]
-PostingResults = List[Tuple[DocId, Weight, List[Position]]]
+PostingResults = Iterable[Tuple[DocId, Weight, List[Position]]]
 SearchResults = List[Tuple[ReviewId, float]]
 
 
