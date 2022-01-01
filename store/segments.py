@@ -88,11 +88,9 @@ def _write_bm25_segment(
         k1: float
 ):
     with open(vocab_path, "w", encoding="utf-8") as vocab_file, \
-            open(postings_path, "w", encoding="utf-8", newline="\n") as postings_file:
+            open(postings_path, "wb", buffering=1024 * 1024) as postings_file:
 
         offset = 0
-        postings_portions = []
-        vocabulary_portions = []
 
         for term, postings in entries:
             byte_len = 0
@@ -105,25 +103,18 @@ def _write_bm25_segment(
                 b_normalizer = 1 - b + b * (document_lengths[doc_id] / avg_dl)
                 weight = idf * ((k1 + 1) * tf) / (k1 * b_normalizer + tf)
 
-                posting_portion = f"{doc_id - prev_doc_id}:{weight}:{','.join(str(pos) for pos in positions)}"
-                byte_len += len(posting_portion.encode("utf-8"))  # Byte size of the posting
-
-                postings_portions.append(posting_portion)
+                posting_portion = f"{doc_id - prev_doc_id}:{weight}:{','.join(map(str, positions))}"
+                byte_len += postings_file.write(posting_portion.encode("utf-8"))  # Byte size of the posting
 
                 if i != postings_count - 1:
-                    postings_portions.append(";")
-                    byte_len += 1  # Byte size of the ;
+                    byte_len += postings_file.write(b";")
 
                 prev_doc_id = doc_id
 
-            postings_portions.append("\n")  # End of the postings for this term
-            byte_len += 1  # needed for the \n
+            byte_len += postings_file.write(b"\n")  # End of the postings for this term
 
-            vocabulary_portions.append(f"{term}:{offset}:{byte_len}\n")
+            vocab_file.write(f"{term}:{offset}:{byte_len}\n")
             offset += byte_len
-
-        postings_file.writelines(postings_portions)
-        vocab_file.writelines(vocabulary_portions)
 
 
 def read_segments(segments_dir_path: str) -> List[Segment]:
