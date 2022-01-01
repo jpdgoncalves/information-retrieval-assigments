@@ -228,5 +228,6 @@ def print_arguments(_arguments: Arguments):
     print(f"Indexing Format: {_arguments.indexing_format.value}")
     print(f"BM25 Parameters: k1={_arguments.k1} b={_arguments.b}")
     print(f"Debug Mode: {'Yes' if _arguments.debug_mode else 'No'}")
+    print(f"Index Only: {'Yes' if _arguments.index_only else 'No'}")
     print(f"Queries Path: {_arguments.queries_path}")
     print(f"Results Path: {_arguments.results_path}")
