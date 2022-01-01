@@ -22,6 +22,7 @@ class Arguments:
     index_path: str
     indexing_format: IndexingFormat
     debug_mode: bool
+    index_only: bool
     k1: float
     b: float
     queries_path: str
@@ -68,6 +69,7 @@ default_arguments = {
     "index_path": "segmented_index",
     "indexing_format": IndexingFormat.TF_IDF,
     "debug_mode": False,
+    "index_only": False,
     "k1": 1.2,
     "b": 0.75,
     "corpus_path": "amazon_reviews_us_Digital_Video_Games_v1_00.tsv.gz",
@@ -146,6 +148,14 @@ arg_parser.add_argument(
     default=default_arguments["debug_mode"]
 )
 
+# Sets script to index only mode
+arg_parser.add_argument(
+    "--index-only",
+    dest="index_only",
+    action="store_true",
+    default=default_arguments["index_only"]
+)
+
 # BM25 Parameters
 arg_parser.add_argument(
     "-k1",
@@ -200,6 +210,7 @@ def get_arguments():
         arg_values.index_path,
         arg_values.indexing_format,
         arg_values.debug_mode,
+        arg_values.index_only,
         arg_values.k1,
         arg_values.b,
         arg_values.queries_path,

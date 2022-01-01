@@ -26,28 +26,31 @@ def main():
     else:
         print("[main]: Skipping indexing phase.")
 
-    print(f"[main]: Searching queries in '{_arguments.queries_path}'.")
-    print(f"[main]: Writing results to '{_arguments.results_path}'")
-    index_directory = index.IndexDirectory(_arguments.index_path)
-    index_properties = idxprops.read_props(index_directory.idx_props_path)
-    index_segments = segments.read_segments(index_directory.segments_dir_path)
-    search_func = searching.get_searcher(
-        index_properties.idx_format,
-        index_properties.min_token_length,
-        index_properties.stopwords,
-        index_properties.stemmer,
-        index_segments,
-        index_directory.review_ids_path
-    )
-    queries = read_queries_file(_arguments.queries_path)
-
-    for query in queries:
-        results = search_func(query)
-        write_results(
-            f"RESULT FOR QUERY '{query}'",
-            results,
-            _arguments.results_path
+    if not _arguments.index_only:
+        print(f"[main]: Searching queries in '{_arguments.queries_path}'.")
+        print(f"[main]: Writing results to '{_arguments.results_path}'")
+        index_directory = index.IndexDirectory(_arguments.index_path)
+        index_properties = idxprops.read_props(index_directory.idx_props_path)
+        index_segments = segments.read_segments(index_directory.segments_dir_path)
+        search_func = searching.get_searcher(
+            index_properties.idx_format,
+            index_properties.min_token_length,
+            index_properties.stopwords,
+            index_properties.stemmer,
+            index_segments,
+            index_directory.review_ids_path
         )
+        queries = read_queries_file(_arguments.queries_path)
+
+        for query in queries:
+            results = search_func(query)
+            write_results(
+                f"RESULT FOR QUERY '{query}'",
+                results,
+                _arguments.results_path
+            )
+    else:
+        print("[main]: Skipping Searching queries phase.")
 
 
 def print_statistics(indexing_statistics: IndexingStatistics):
