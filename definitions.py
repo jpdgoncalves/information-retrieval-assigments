@@ -20,6 +20,8 @@ class IndexingStatistics:
     review_count: int
     blocks_used: int
 
+# Basic data types
+
 
 ReviewId = str
 DocId = int
@@ -28,35 +30,30 @@ Position = int
 Length = int
 Term = str
 
+# Reader data types
 RawReview = Tuple[DocId, ReviewId, str]
-Token = Tuple[Term, Position]
+RawReviewReader = Generator[RawReview, None, None]
 
-Posting = Tuple[Weight, List[Position]]
-Postings = List[Tuple[DocId, Posting]]
-Vocabulary = DefaultDict[Term, Postings]
+# Processor data types
+Token = Tuple[Term, Position]
 TermIndex = Dict[Term, List[Position]]
+Posting = Tuple[Weight, List[Position]]
 TermPostings = Dict[Term, Posting]
-TermPostingsEntry = Tuple[Term, Postings]
 
 ProcessedReview = Tuple[DocId, ReviewId, TermPostings, Length]
 ProcessedQuery = Tuple[Length, TermIndex]
 
-RawReviewReader = Generator[RawReview, None, None]
-StemmerFunction = Callable[[str], str]
 Processor = Callable[[RawReview], ProcessedReview]
+StemmerFunction = Callable[[str], str]
 WeightFunction = Callable[[TermIndex], TermPostings]
+
+# Inverted Dictionary data types
+Postings = List[Tuple[DocId, Weight, List[Position]]]
+Vocabulary = DefaultDict[Term, Postings]
+TermPostingsEntry = Tuple[Term, Postings]
+
+# Store data types
 SegmentWriteFormat = Callable[[str, str, List[TermPostingsEntry]], None]
-
-Path = str
-Idf = float
-Offset = int
-PostingLen = int
-
-Segment = Tuple[Term, Term, Path]
-IdfMetadata = Tuple[Path, Idf, Offset, PostingLen]
-BM25Metadata = Tuple[Path, Offset, PostingLen]
-PostingResults = Iterable[Tuple[DocId, Weight, List[Position]]]
-SearchResults = List[Tuple[ReviewId, float]]
 
 
 @dataclass
@@ -78,3 +75,16 @@ class IndexPropsDict(TypedDict):
     min_token_length: int
     stopwords: List[str]  # a string of words separated by commas
     stemmer: str
+
+
+# Searching data types
+Path = str
+Idf = float
+Offset = int
+PostingLen = int
+
+Segment = Tuple[Term, Term, Path]
+IdfMetadata = Tuple[Path, Idf, Offset, PostingLen]
+BM25Metadata = Tuple[Path, Offset, PostingLen]
+PostingResults = Iterable[Tuple[DocId, Weight, List[Position]]]
+SearchResults = List[Tuple[ReviewId, float]]
