@@ -1,8 +1,6 @@
 """
 This module contains a class that serves as the segmented index writer for the
 indexing pipeline.
-
-For testing purpose we will use term count to divide the segments.
 """
 from typing import List
 from definitions import SegmentWriteFormat, TermPostingsEntry
@@ -11,8 +9,6 @@ from store.index import IndexDirectory
 
 
 class SegmentWriter:
-    # For some reason I am duplicating the entries
-    # Need to fix that
     def __init__(
             self,
             index_directory: IndexDirectory,

@@ -24,5 +24,5 @@ class PostingsDictionary:
         doc_id, review_id, postings, _ = review
         self.review_ids.append(review_id)
 
-        for term, posting in postings.items():
-            self.postings_list[term].append((doc_id, posting))
+        for term, (weight, positions) in postings.items():
+            self.postings_list[term].append((doc_id, weight, positions))
