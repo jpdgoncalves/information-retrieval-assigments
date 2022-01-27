@@ -3,6 +3,42 @@ from typing import List, Optional, Tuple
 from definitions import Segment, Term, BM25Metadata, IdfMetadata, Path
 
 
+def serialize_tf_idf_metadata(term: str, idf: float, offset: int, byte_len: int):
+    return f"{term}:{idf}:{offset}:{byte_len}\n"
+
+
+def deserialize_tf_idf_metadata(data: str) -> IdfMetadata:
+    term, idf, offset, byte_len = data.split(":")
+    return term, float(idf), int(offset), int(byte_len)
+
+
+def serialize_bm25_metadata(term: str, offset: int, byte_len: int):
+    return f"{term}:{offset}:{byte_len}\n"
+
+
+def deserialize_bm25_metadata(data: str) -> BM25Metadata:
+    term, offset, byte_len = data.split(":")
+    return term, int(offset), int(byte_len)
+
+
+def write_tf_idf_vocabulary(
+        vocab_path: str, terms: list[str], idfs: list[float],
+        offsets: list[int], lengths: list[int]
+):
+    with open(vocab_path, "w", encoding="utf-8", newline="\n") as vocab_file:
+        for term, idf, offset, length in zip(terms, idfs, offsets, lengths):
+            vocab_file.write(serialize_tf_idf_metadata(term, idf, offset, length))
+
+
+def write_bm25_vocabulary(
+        vocab_path: str, terms: list[str],
+        offsets: list[int], lengths: list[int]
+):
+    with open(vocab_path, "w", encoding="utf-8", newline="\n") as vocab_file:
+        for term, offset, length in zip(terms, offsets, lengths):
+            vocab_file.write(serialize_bm25_metadata(term, offset, length))
+
+
 def bm25_metadata_reader(segments: List[Segment]):
     def read(term: Term) -> Optional[BM25Metadata]:
         # print(f"[vocabulary]: Searching for term '{term}'")

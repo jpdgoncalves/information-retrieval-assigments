@@ -1,20 +1,31 @@
-import math
 import os
 from typing import List
 
 from definitions import TermPostingsEntry, Segment
-from .postings import serialize_as_postings
+
+from . import postings
+from . import vocabulary
 
 
-def tf_idf_format(review_count: int):
-    def _write(
+def segment_formatter(postings_write: callable, vocab_write: callable, **props):
+    def write_segment(
             vocab_path: str,
             postings_path: str,
             entries: List[TermPostingsEntry]
     ):
-        _write_tf_idf_segment(vocab_path, postings_path, entries, review_count)
+        terms, l_postings = tuple(zip(*entries))
+        offsets = postings_write(postings_path, l_postings, **props)
+        vocab_write(vocab_path, terms, *offsets)
 
-    return _write
+    return write_segment
+
+
+def tf_idf_format(review_count: int):
+    return segment_formatter(
+        postings.write_tf_idf_postings,
+        vocabulary.write_tf_idf_vocabulary,
+        review_count=review_count
+    )
 
 
 def bm25_format(
@@ -24,78 +35,14 @@ def bm25_format(
         b: float,
         k1: float
 ):
-    def _write(
-            vocab_path: str,
-            postings_path: str,
-            entries: List[TermPostingsEntry]
-    ):
-        _write_bm25_segment(
-            vocab_path, postings_path, entries,
-            review_count, avg_dl, document_lengths, b, k1
-        )
-
-    return _write
-
-
-def _write_tf_idf_segment(
-        vocab_path: str,
-        postings_path: str,
-        entries: List[TermPostingsEntry],
-        review_count: int
-):
-    with open(vocab_path, "w", encoding="utf-8") as vocab_file, \
-            open(postings_path, "wb", buffering=1024 * 1024) as postings_file:
-
-        offset = 0
-
-        for term, postings in entries:
-            postings_count = len(postings)
-            idf = math.log10(review_count / postings_count)
-            doc_ids, weights, l_positions = tuple(zip(*postings))
-            doc_ids_diffs = [doc_ids[0]] + [doc_ids[i + 1] - doc_ids[i] for i in range(0, postings_count - 1)]
-
-            byte_len = postings_file.write(
-                f"{serialize_as_postings(doc_ids_diffs, weights, l_positions)}\n".encode("utf-8")
-            )
-
-            vocab_file.write(f"{term}:{idf}:{offset}:{byte_len}\n")
-            offset += byte_len
-
-
-def _write_bm25_segment(
-        vocab_path: str,
-        postings_path: str,
-        entries: List[TermPostingsEntry],
-        review_count: int,
-        avg_dl: float,
-        document_lengths: List[int],
-        b: float,
-        k1: float
-):
-    with open(vocab_path, "w", encoding="utf-8") as vocab_file, \
-            open(postings_path, "wb", buffering=1024 * 1024) as postings_file:
-
-        offset = 0
-
-        for term, postings in entries:
-            postings_count = len(postings)
-            idf = math.log10(review_count / postings_count)
-            doc_ids, tfs, l_positions = tuple(zip(*postings))
-            doc_ids_diffs = [doc_ids[0]] + [doc_ids[i+1] - doc_ids[i] for i in range(0, postings_count-1)]
-            doc_lens = [document_lengths[doc_id] for doc_id in doc_ids]
-            weights = [_bm25_weight(avg_dl, doc_len, b, k1, idf, tf) for doc_len, tf in zip(doc_lens, tfs)]
-
-            byte_len = postings_file.write(
-                f"{serialize_as_postings(doc_ids_diffs, weights, l_positions)}\n".encode("utf-8")
-            )
-
-            vocab_file.write(f"{term}:{offset}:{byte_len}\n")
-            offset += byte_len
-
-
-def _bm25_weight(avg_dl: float, doc_len: int, b: float, k1: float, idf: float, tf: int):
-    b_normalizer = 1 - b + b * (doc_len / avg_dl)
-    return idf * ((k1 + 1) * tf) / (k1 * b_normalizer + tf)
+    return segment_formatter(
+        postings.write_bm25_postings,
+        vocabulary.write_bm25_vocabulary,
+        review_count=review_count,
+        avg_dl=avg_dl,
+        document_lengths=document_lengths,
+        b=b, k1=k1
+    )
 
 
 def read_segments(segments_dir_path: str) -> List[Segment]:
