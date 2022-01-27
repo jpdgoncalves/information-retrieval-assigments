@@ -13,7 +13,7 @@ class IndexCreationOptions(Enum):
 
 
 def _create_file(path: str):
-    with open(path, "w", encoding="utf-8"):
+    with open(path, "w", encoding="utf-8", newline="\n"):
         pass
 
 
