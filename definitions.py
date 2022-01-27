@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import (
     DefaultDict, Tuple, Set, TypedDict,
-    List, Callable, Dict, Generator, Iterable
+    List, Callable, Dict, Generator, Iterable, TextIO
 )
 
 
@@ -54,6 +54,7 @@ TermPostingsEntry = Tuple[Term, Postings]
 
 # Store data types
 SegmentWriteFormat = Callable[[str, str, List[TermPostingsEntry]], None]
+Block = Tuple[Term, DocId, Postings, TextIO]
 
 
 @dataclass
