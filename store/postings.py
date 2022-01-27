@@ -29,7 +29,7 @@ def deserialize_posting(data: str):
     return int(doc_id), float(weight), deserialize_positions(positions)
 
 
-def deserialize_postings(data):
+def deserialize_postings(data: str) -> Postings:
     return [deserialize_posting(posting) for posting in data.split(";")]
 
 
