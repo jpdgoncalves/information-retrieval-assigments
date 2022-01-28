@@ -7,22 +7,18 @@ Made by: José Gonçalves nº84967
 import searching
 from arguments import get_arguments, print_arguments
 from definitions import IndexingFormat, IndexingStatistics, SearchResults
-from indexing import tf_idf, bm25
 from store import idxprops, index, segments
 
 import utils
+import indexing
 
 
 def main():
     _arguments = get_arguments()
     print_arguments(_arguments)
 
-    if _arguments.indexing_format == IndexingFormat.TF_IDF:
-        indexing_statistics = tf_idf.create_index(_arguments)
-        print_statistics(indexing_statistics)
-    elif _arguments.indexing_format == IndexingFormat.BM25:
-        indexing_statistics = bm25.create_index(_arguments)
-        print_statistics(indexing_statistics)
+    if _arguments.indexing_format != IndexingFormat.NO_INDEX:
+        indexing.create_index(_arguments)
     else:
         print("[main]: Skipping indexing phase.")
 
