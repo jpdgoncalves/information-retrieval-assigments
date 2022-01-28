@@ -2,15 +2,39 @@
 Module containing utility functions used during the indexing pipeline.
 """
 import gc
+import statistics
 
+import processor
 import store.reviews
-from definitions import SegmentWriteFormat, Processor, RawReviewReader
+import store.segments
+from arguments import Arguments
+from store.segments import BufferedSegmentWriter
+from definitions import SegmentFormat, Processor, RawReviewReader
 from dictionary import PostingsDictionary
-from store import blocks
+from store import blocks, segments
 from store.blocks import blocks_iterator
 from store.index import IndexDirectory
 from utils import MemoryChecker
-from .segments import SegmentWriter
+
+
+def tf_idf_review_processor(_arguments: Arguments):
+    stemmer = processor.english_stemmer if _arguments.use_potter_stemmer else processor.no_stemmer
+    return processor.review_processor(
+        _arguments.min_token_length,
+        _arguments.stopwords,
+        stemmer,
+        processor.normalized_tf_term_index
+    )
+
+
+def bm_25_review_processor(_arguments: Arguments):
+    stemmer = processor.english_stemmer if _arguments.use_potter_stemmer else processor.no_stemmer
+    return processor.review_processor(
+        _arguments.min_token_length,
+        _arguments.stopwords,
+        stemmer,
+        processor.count_term_index
+    )
 
 
 def index_reviews(
@@ -53,7 +77,35 @@ def index_reviews(
     return document_lengths
 
 
-def merge_blocks(index_directory: IndexDirectory, segment_format: SegmentWriteFormat, debug_mode: bool):
+def merge_tf_idf_blocks(document_lengths: list[int], index_dir: IndexDirectory, _arguments: Arguments):
+    review_count = len(document_lengths)
+    segment_format = segments.tf_idf_format(review_count)
+
+    term_count = merge_blocks(index_dir, segment_format, _arguments.debug_mode)
+    index_size = index_dir.index_size()
+
+    return review_count, term_count, index_size
+
+
+def merge_bm25_blocks(document_lengths: list[int], index_dir: IndexDirectory, _arguments: Arguments):
+    avg_document_length = statistics.mean(document_lengths)
+    review_count = len(document_lengths)
+
+    segment_format = segments.bm25_format(
+        review_count,
+        avg_document_length,
+        document_lengths,
+        _arguments.b,
+        _arguments.k1
+    )
+
+    term_count = merge_blocks(index_dir, segment_format, _arguments.debug_mode)
+    index_size = index_dir.index_size()
+
+    return review_count, term_count, index_size
+
+
+def merge_blocks(index_directory: IndexDirectory, segment_format: SegmentFormat, debug_mode: bool):
     """
     Utility function that merges the block files into the final index.
     :param index_directory:
@@ -62,7 +114,7 @@ def merge_blocks(index_directory: IndexDirectory, segment_format: SegmentWriteFo
     :return:
     """
     print("[processing]: Merging blocks into final index")
-    segment_writer = SegmentWriter(index_directory, segment_format)
+    segment_writer = BufferedSegmentWriter(segment_format, index_directory)
 
     for entry in blocks_iterator(index_directory.block_paths):
         segment_writer.write(entry)

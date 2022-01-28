@@ -1,13 +1,14 @@
 import os
 from typing import List
 
-from definitions import TermPostingsEntry, Segment
+from definitions import TermPostingsEntry, Segment, PostsFormat, VocabFormat, SegmentFormat
 
 from . import postings
 from . import vocabulary
+from .index import IndexDirectory
 
 
-def segment_formatter(postings_write: callable, vocab_write: callable, **props):
+def segment_formatter(postings_write: PostsFormat, vocab_write: VocabFormat, **props):
     def write_segment(
             vocab_path: str,
             postings_path: str,
@@ -20,10 +21,45 @@ def segment_formatter(postings_write: callable, vocab_write: callable, **props):
     return write_segment
 
 
+class BufferedSegmentWriter:
+    def __init__(
+            self, segment_format: SegmentFormat, index_directory: IndexDirectory,
+            n_terms_per_seg=50000,
+    ):
+        self.index_dir = index_directory
+        self.write_segment = segment_format
+
+        self.posts_buffer: List[TermPostingsEntry] = []
+        self.n_terms_per_seg = n_terms_per_seg
+        self.buffer_count = 0
+        self.term_count = 0
+
+    def write(self, entry: TermPostingsEntry):
+        if self.buffer_count < self.n_terms_per_seg:
+            self.posts_buffer.append(entry)
+            self.buffer_count += 1
+            self.term_count += 1
+        else:
+            self.flush()
+            self.posts_buffer.append(entry)
+
+    def flush(self):
+        first_term = self.posts_buffer[0][0]
+        last_term = self.posts_buffer[-1][0]
+        segment_path, vocab_path, postings_path = self.index_dir.make_segment_dir(first_term, last_term)
+
+        print(f"[SegmentWriter] Writing segment {segment_path}")
+        self.write_segment(vocab_path, postings_path, self.posts_buffer)
+        print(f"[SegmentWriter] Finished writing {segment_path}")
+
+        self.posts_buffer = []
+        self.buffer_count = 0
+
+
 def tf_idf_format(review_count: int):
     return segment_formatter(
-        postings.write_tf_idf_postings,
-        vocabulary.write_tf_idf_vocabulary,
+        postings.write_bm25_postings,
+        vocabulary.write_bm25_vocabulary,
         review_count=review_count
     )
 

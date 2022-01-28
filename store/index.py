@@ -65,7 +65,7 @@ class IndexDirectory:
         Creates a new block path and adds it to the internal block paths list.
         :return:
         """
-        block_path = f"{self.blocks_dir_path}/{self.block_prefix}_{self.block_count}.pickle"
+        block_path = f"{self.blocks_dir_path}/{self.block_prefix}_{self.block_count}.txt"
         self.block_paths.append(block_path)
         return block_path
 

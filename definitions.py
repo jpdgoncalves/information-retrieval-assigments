@@ -20,9 +20,10 @@ class IndexingStatistics:
     review_count: int
     blocks_used: int
 
+
+Path = str
+
 # Basic data types
-
-
 ReviewId = str
 DocId = int
 Weight = float
@@ -53,7 +54,9 @@ Vocabulary = DefaultDict[Term, Postings]
 TermPostingsEntry = Tuple[Term, Postings]
 
 # Store data types
-SegmentWriteFormat = Callable[[str, str, List[TermPostingsEntry]], None]
+PostsFormat = Callable[[Path, List[Postings], ...], Tuple]
+VocabFormat = Callable[[Path, List[Term], ...], None]
+SegmentFormat = Callable[[str, str, List[TermPostingsEntry]], None]
 Block = Tuple[Term, DocId, Postings, TextIO]
 
 
@@ -79,7 +82,6 @@ class IndexPropsDict(TypedDict):
 
 
 # Searching data types
-Path = str
 Idf = float
 Offset = int
 PostingLen = int

@@ -1,7 +1,7 @@
 import json
 import processor
 from typing import Set
-from definitions import StemmerFunction, IndexingFormat, IndexPropsDict, IndexProperties
+from definitions import IndexingFormat, IndexPropsDict, IndexProperties
 
 
 def write_props(
@@ -12,7 +12,7 @@ def write_props(
         review_count: int,
         min_token_length: int,
         stopwords: Set[str],
-        stemmer: StemmerFunction
+        used_stemmer: bool
 ):
     with open(props_path, "w", encoding="utf-8") as props_file:
         props_dict: IndexPropsDict = {
@@ -22,7 +22,7 @@ def write_props(
             "review_count": review_count,
             "min_token_length": min_token_length,
             "stopwords": list(stopwords),
-            "stemmer": "english_stemmer" if stemmer is processor.english_stemmer else "no_stemmer"
+            "stemmer": "english_stemmer" if used_stemmer else "no_stemmer"
         }
         json.dump(props_dict, props_file)
 
