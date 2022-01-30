@@ -1,6 +1,6 @@
 import math
 from typing import List
-from src.definitions import Path, Offset, PostingLen, PostingResults, Postings
+from definitions import Path, Offset, PostingLen, PostingResults, Postings
 
 
 def serialize_positions(positions: List[int]):

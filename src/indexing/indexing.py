@@ -1,13 +1,13 @@
 import time
 
-from src.arguments import Arguments
-from src.corpus import raw_review_reader
-from src.definitions import IndexingStatistics, IndexingFormat
-from src.indexing.processing import bm_25_review_processor, index_reviews, merge_bm25_blocks, tf_idf_review_processor, \
+from arguments import Arguments
+from corpus import raw_review_reader
+from definitions import IndexingStatistics, IndexingFormat
+from indexing.processing import bm_25_review_processor, index_reviews, merge_bm25_blocks, tf_idf_review_processor, \
     merge_tf_idf_blocks
-from src.store import idxprops, index
-from src.store.index import IndexDirectory
-from src.utils import MemoryChecker
+from store import idxprops, index
+from store.index import IndexDirectory
+from utils import MemoryChecker
 
 
 def get_processor(_arguments: Arguments):

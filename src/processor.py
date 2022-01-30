@@ -6,7 +6,7 @@ import Stemmer
 from collections import defaultdict
 from typing import Set, Callable, List, Dict
 
-from src.definitions import (
+from definitions import (
     RawReview, ProcessedReview, ProcessedQuery, Term, Idf,
     TermIndex, TermPostings, WeightFunction, StemmerFunction
 )

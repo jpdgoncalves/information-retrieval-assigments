@@ -63,7 +63,7 @@ def _existing_path(file_path: str) -> str:
 
 default_arguments = {
     "min_token_length": 3,
-    "stopwords": _read_stopwords_file("../data/stopwords.txt"),
+    "stopwords": _read_stopwords_file("data/stopwords.txt"),
     "use_potter_stemmer": True,
     "memory_threshold": 0.5,
     "index_path": "results/segmented_index",

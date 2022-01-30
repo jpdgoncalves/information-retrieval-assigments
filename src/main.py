@@ -8,9 +8,9 @@ import searching
 from arguments import get_arguments, print_arguments
 from definitions import IndexingFormat, IndexingStatistics, SearchResults
 from store import idxprops, index, segments
+from indexing import indexing
 
 import utils
-from src import indexing
 
 
 def main():
@@ -18,7 +18,8 @@ def main():
     print_arguments(_arguments)
 
     if _arguments.indexing_format != IndexingFormat.NO_INDEX:
-        indexing.create_index(_arguments)
+        index_stats = indexing.create_index(_arguments)
+        print_statistics(index_stats)
     else:
         print("[main]: Skipping indexing phase.")
 

@@ -1,6 +1,6 @@
 from typing import List, Tuple, BinaryIO
 
-from src.definitions import ReviewId, Offset, Length, DocId
+from definitions import ReviewId, Offset, Length, DocId
 
 
 def write_review_ids(review_ids_path: str, review_ids: List[ReviewId]):

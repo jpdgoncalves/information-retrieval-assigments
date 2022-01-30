@@ -1,11 +1,11 @@
 import os
 from typing import List
 
-from src.definitions import TermPostingsEntry, Segment, PostsFormat, VocabFormat, SegmentFormat
+from definitions import TermPostingsEntry, Segment, PostsFormat, VocabFormat, SegmentFormat
 
-from . import postings
-from . import vocabulary
-from .index import IndexDirectory
+from store import postings
+from store import vocabulary
+from store.index import IndexDirectory
 
 
 def segment_formatter(postings_write: PostsFormat, vocab_write: VocabFormat, **props):
@@ -58,8 +58,8 @@ class BufferedSegmentWriter:
 
 def tf_idf_format(review_count: int):
     return segment_formatter(
-        postings.write_bm25_postings,
-        vocabulary.write_bm25_vocabulary,
+        postings.write_tf_idf_postings,
+        vocabulary.write_tf_idf_vocabulary,
         review_count=review_count
     )
 

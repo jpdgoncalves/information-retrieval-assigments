@@ -1,7 +1,7 @@
 import json
-from src import processor
+import processor
 from typing import Set
-from src.definitions import IndexingFormat, IndexPropsDict, IndexProperties
+from definitions import IndexingFormat, IndexPropsDict, IndexProperties
 
 
 def write_props(

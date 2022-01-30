@@ -1,13 +1,13 @@
 from typing import List, Set, Dict
 from collections import defaultdict
 
-from src.definitions import (
+from definitions import (
     Segment, StemmerFunction, IndexingFormat
 )
-from src import processor
-from src.store.postings import read_postings
-from src.store.reviews import review_id_reader
-from src.store import tf_idf_metadata_reader, bm25_metadata_reader
+import processor
+from store.postings import read_postings
+from store.reviews import review_id_reader
+from store.vocabulary import tf_idf_metadata_reader, bm25_metadata_reader
 
 
 def get_searcher(

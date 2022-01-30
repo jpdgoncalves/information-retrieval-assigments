@@ -1,6 +1,6 @@
 from typing import List, Generator, TextIO, Optional
-from src.definitions import Vocabulary, TermPostingsEntry, Block
-from .postings import serialize_postings, deserialize_postings
+from definitions import Vocabulary, TermPostingsEntry, Block
+from store.postings import serialize_postings, deserialize_postings
 
 import heapq
 

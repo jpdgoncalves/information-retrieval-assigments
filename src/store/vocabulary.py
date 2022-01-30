@@ -1,6 +1,6 @@
 from typing import List, Optional, Tuple
 
-from src.definitions import Segment, Term, BM25Metadata, IdfMetadata, Path
+from definitions import Segment, Term, BM25Metadata, IdfMetadata, Path
 
 
 def serialize_tf_idf_metadata(term: str, idf: float, offset: int, byte_len: int):

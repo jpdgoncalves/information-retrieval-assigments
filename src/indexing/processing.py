@@ -4,15 +4,15 @@ Module containing utility functions used during the indexing pipeline.
 import gc
 import statistics
 
-from src import processor
-from src.arguments import Arguments
-from src.store.segments import BufferedSegmentWriter
-from src.definitions import SegmentFormat, Processor, RawReviewReader
-from src.dictionary import PostingsDictionary
-from src.store import blocks, segments
-from src.store.blocks import blocks_iterator
-from src.store.index import IndexDirectory
-from src.utils import MemoryChecker
+import processor
+from arguments import Arguments
+from store.segments import BufferedSegmentWriter
+from definitions import SegmentFormat, Processor, RawReviewReader
+from dictionary import PostingsDictionary
+from store import blocks, segments, reviews
+from store.blocks import blocks_iterator
+from store.index import IndexDirectory
+from utils import MemoryChecker
 
 
 def tf_idf_review_processor(_arguments: Arguments):
@@ -62,12 +62,12 @@ def index_reviews(
 
         if memory_checker.has_reached_threshold():
             blocks.write_block(index_directory.get_block_path(), postings_dictionary.postings_list)
-            src.store.reviews.write_review_ids(index_directory.review_ids_path, postings_dictionary.review_ids)
+            reviews.write_review_ids(index_directory.review_ids_path, postings_dictionary.review_ids)
             postings_dictionary = PostingsDictionary()
             collect_garbage()
 
     blocks.write_block(index_directory.get_block_path(), postings_dictionary.postings_list)
-    src.store.reviews.write_review_ids(index_directory.review_ids_path, postings_dictionary.review_ids)
+    reviews.write_review_ids(index_directory.review_ids_path, postings_dictionary.review_ids)
     postings_dictionary = None
     collect_garbage()
 

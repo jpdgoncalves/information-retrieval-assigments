@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from src.definitions import Term
+from definitions import Term
 
 from enum import Enum, auto
 
@@ -87,6 +87,7 @@ class IndexDirectory:
         return result_paths
 
     def delete_blocks_dir(self):
+        print(f"[IndexDirectory]: Deleting {self.blocks_dir_path}")
         shutil.rmtree(self.blocks_dir_path)
         self.block_paths = []
 
