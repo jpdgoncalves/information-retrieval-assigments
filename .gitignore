@@ -1,10 +1,6 @@
 venv/
 /.idea/
-index/
 segmented_index/
-block_*.txt
-testing.py
-planning.txt
-data/
+src/testing.py
 results.txt
 *.pclprof
