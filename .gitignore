@@ -6,4 +6,5 @@ data/amazon_reviews_us_Books_v1_00.tsv.gz
 data/amazon_reviews_us_Digital_Music_Purchase_v1_00.tsv.gz
 data/amazon_reviews_us_Music_v1_00.tsv.gz
 results.txt
+log.txt
 *.pclprof
