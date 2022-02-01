@@ -9,13 +9,16 @@
 - Activate the virtual environment if it isn't already
 - Run ```python src/main.py [options]```
 
-With this configuration the script should create an index folder
-called `results/segmented_index`. The tokens will have a length equal or larger
+Running without any parameters should create an index folder
+called `results/segmented_index` and index the `data/amazon_reviews_us_Digital_Video_Games_v1_00.tsv.gz`.
+The tokens will have a length equal or larger
 than 3 characters, stopwords will be filtered and words will be stemmed
 
-After the indexing process is done it will run load the index and the
-queries in `data/queries.txt`. Then for each query it will retrieve
-the top 100 results and write them into `results/results.txt`
+After the indexing process is done it will load the index and the
+queries in `data/queries.txt` as well as queries relevance in `data/queries.relevance.txt`.
+Then for each query it will retrieve  the top 100 results and write them into `results/results.txt`.
+After processing all queries it will write various evaluation metrics (Precision, Recall, NDGC, etc)
+into `data/evaluation.txt`.
 
 ## Command Options
 
