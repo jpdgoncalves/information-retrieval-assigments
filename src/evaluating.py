@@ -116,7 +116,7 @@ class Evaluator:
             query_median = median(sorted(self.query_times))
 
             dest_f.write(f"Query Throughout: {query_throughout}/s\n")
-            dest_f.write(f"Query Median: {query_median}s\n")
+            dest_f.write(f"Query Median: {query_median}s\n\n\n")
 
 
 def read_relevance_file(f_path: str) -> dict[str, dict[str, int]]:
