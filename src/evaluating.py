@@ -86,7 +86,7 @@ class Evaluator:
         exp_res_iter = expected_results.items()
         _, dgc = next(exp_res_iter)
 
-        for i, (_, relevance) in zip(range(2, self.results_limit), exp_res_iter):
+        for i, (_, relevance) in zip(range(2, self.results_limit+1), exp_res_iter):
             dgc += relevance / log2(i)
 
         return dgc
