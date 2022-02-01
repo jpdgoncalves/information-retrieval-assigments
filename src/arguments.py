@@ -26,7 +26,10 @@ class Arguments:
     k1: float
     b: float
     queries_path: str
+    queries_rev_path: str
     results_path: str
+    evaluation_path: str
+    query_limit: int
 
 
 def _positive_int(value_str: str) -> int:
@@ -74,7 +77,10 @@ default_arguments = {
     "b": 0.75,
     "corpus_path": "data/amazon_reviews_us_Digital_Video_Games_v1_00.tsv.gz",
     "queries_path": "data/queries.txt",
-    "results_path": "results/results.txt"
+    "query_rev_path": "data/queries.relevance.txt",
+    "results_path": "results/results.txt",
+    "evaluation_path": "results/evaluation.txt",
+    "query_limit": 100
 }
 
 arg_parser = ArgumentParser(
@@ -195,6 +201,27 @@ arg_parser.add_argument(
     default=default_arguments["results_path"]
 )
 
+# Handling of evaluation parameters
+arg_parser.add_argument(
+    "-qrp", "--queries-relevance-path",
+    dest="queries_rev_path",
+    type=_existing_path,
+    default=default_arguments["query_rev_path"]
+)
+
+arg_parser.add_argument(
+    "-ep", "--evaluation-path",
+    dest="evaluation_path",
+    default=default_arguments["evaluation_path"]
+)
+
+arg_parser.add_argument(
+    "-ql", "--query-limit",
+    dest="query_limit",
+    type=int,
+    default=default_arguments["query_limit"]
+)
+
 
 def get_arguments():
     global arg_parser
@@ -214,7 +241,10 @@ def get_arguments():
         arg_values.k1,
         arg_values.b,
         arg_values.queries_path,
-        arg_values.results_path
+        arg_values.queries_rev_path,
+        arg_values.results_path,
+        arg_values.evaluation_path,
+        arg_values.query_limit
     )
 
 
@@ -231,3 +261,6 @@ def print_arguments(_arguments: Arguments):
     print(f"Index Only: {'Yes' if _arguments.index_only else 'No'}")
     print(f"Queries Path: {_arguments.queries_path}")
     print(f"Results Path: {_arguments.results_path}")
+    print(f"Evaluation Path: {_arguments.evaluation_path}")
+    print(f"Queries Relevance Path: {_arguments.queries_rev_path}")
+    print(f"Query Results Limit: {'No' if _arguments.query_limit < 1 else _arguments.query_limit}")

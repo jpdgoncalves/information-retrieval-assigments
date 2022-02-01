@@ -7,6 +7,7 @@ Made by: José Gonçalves nº84967
 import searching
 from arguments import get_arguments, print_arguments
 from definitions import IndexingFormat, IndexingStatistics, SearchResults
+from evaluating import Evaluator
 from store import idxprops, index, segments
 from indexing import indexing
 
@@ -38,14 +39,18 @@ def main():
             index_directory.review_ids_path
         )
         queries = read_queries_file(_arguments.queries_path)
+        evaluator = Evaluator(_arguments.queries_rev_path, search_func, _arguments.query_limit)
 
         for query in queries:
-            results = search_func(query)
+            # results = search_func(query)
+            results = evaluator.search(query)
             write_results(
                 f"RESULT FOR QUERY '{query}'",
                 results,
                 _arguments.results_path
             )
+
+        evaluator.output_evaluation(_arguments.evaluation_path)
     else:
         print("[main]: Skipping Searching queries phase.")
 

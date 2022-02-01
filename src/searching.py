@@ -34,9 +34,8 @@ def tf_idf_searcher(
     process_query = processor.query_processor(min_token_length, stopwords, stemmer)
     read_tf_idf_meta = tf_idf_metadata_reader(segments)
     retrieve_review_ids = _review_ids_retriever(review_ids_path)
-    results_limit = 100
 
-    def search(query: str):
+    def search(query: str, results_limit=100):
         _, term_index = process_query(query)
         terms_metadata = {}
         scores: Dict[int, float] = defaultdict(float)
@@ -73,9 +72,8 @@ def bm25_searcher(
     process_query = processor.query_processor(min_token_length, stopwords, stemmer)
     read_bm25_meta = bm25_metadata_reader(segments)
     retrieve_review_ids = _review_ids_retriever(review_ids_path)
-    results_limit = 100
 
-    def search(query: str):
+    def search(query: str, results_limit=100):
         _, term_index = process_query(query)
         terms_metadata = {}
         scores: Dict[int, float] = defaultdict(float)
@@ -103,7 +101,8 @@ def _review_ids_retriever(review_ids_path: str):
         sorted_doc_ids = sorted(
             ((score, doc_id) for doc_id, score in scores.items()),
             reverse=True
-        )[:results_limit]
+        )
+        sorted_doc_ids = sorted_doc_ids if results_limit < 1 else sorted_doc_ids[:results_limit]
 
         with open(review_ids_path, "rb") as review_ids_file:
             search_results = [(read_review_id(review_ids_file, doc_id), score) for score, doc_id in sorted_doc_ids]
