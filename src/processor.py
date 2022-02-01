@@ -56,7 +56,8 @@ def process_str(
         stemmer: Callable[[str], str],
 ):
     words = _regex_pattern.sub(" ", content.lower()).split(" ")
-    return [stemmer(word) for word in words if min_token_len <= len(word) < 50 and word not in stopwords]
+    words = [stemmer(word) for word in words if word not in stopwords]
+    return [word for word in words if min_token_len <= len(word) < 50]
 
 
 def aggregate(words: List[str]) -> TermIndex:
