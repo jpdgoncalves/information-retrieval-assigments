@@ -9,3 +9,5 @@ results.txt
 log.txt
 *.pclprof
 *.bat
+tf_idf_index/
+bm25_index/
