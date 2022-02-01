@@ -22,10 +22,12 @@ class Evaluator:
         self.results_limit = results_limit
 
     def search(self, query: str):
+        print(f"[Evaluator]: searching '{query}'")
         start = time.time()
         results = self.search_func(query, self.results_limit)
         end = time.time()
 
+        print(f"[Evaluator]: Registering results for '{query}'")
         precision = self.calc_precision(query, results)
         recall = self.calc_recall(query, results)
         f_measure = (2 * recall * precision) / (recall + precision)
@@ -73,7 +75,7 @@ class Evaluator:
         (first_r_id, _), *rem_results = results
         dgc = expected_results[first_r_id] if first_r_id in expected_results else 0
 
-        for i, (review_id, _) in enumerate(rem_results, start=1):
+        for i, (review_id, _) in enumerate(rem_results, start=2):
             if review_id in expected_results:
                 dgc += expected_results[review_id] / log2(i)
 
@@ -84,7 +86,7 @@ class Evaluator:
         exp_res_iter = expected_results.items()
         _, dgc = next(exp_res_iter)
 
-        for i, (_, relevance) in zip(range(1, self.results_limit), exp_res_iter):
+        for i, (_, relevance) in zip(range(2, self.results_limit), exp_res_iter):
             dgc += relevance / log2(i)
 
         return dgc
@@ -100,6 +102,8 @@ class Evaluator:
         return n_t_results
 
     def output_evaluation(self, dest_path: str):
+        print(f"[Evaluator]: Writing evaluation results to '{dest_path}'")
+
         with open(dest_path, "w", newline="\n", encoding="utf-8") as dest_f:
             dest_f.write(f"Evaluation results for top {self.results_limit}\n\n\n")
             dest_f.write(f"Mean Precision: {mean(self.precisions)}\n")
