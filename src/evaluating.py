@@ -30,7 +30,7 @@ class Evaluator:
         print(f"[Evaluator]: Registering results for '{query}'")
         precision = self.calc_precision(query, results)
         recall = self.calc_recall(query, results)
-        f_measure = (2 * recall * precision) / (recall + precision)
+        f_measure = (2 * recall * precision) / (recall + precision) if recall + precision > 0 else 0
         avg_precision = self.calc_avg_precision(query, results)
         ndgc = self.calc_ndgc(query, results)
 
@@ -83,7 +83,7 @@ class Evaluator:
 
     def calc_perf_dgc(self, query: str):
         expected_results = self.queries_rev[query]
-        exp_res_iter = expected_results.items()
+        exp_res_iter = iter(expected_results.items())
         _, dgc = next(exp_res_iter)
 
         for i, (_, relevance) in zip(range(2, self.results_limit+1), exp_res_iter):
