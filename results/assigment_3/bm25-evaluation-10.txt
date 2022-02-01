@@ -1,0 +1,12 @@
+Evaluation results for top 10
+
+
+Mean Precision: 0.7866666666666666
+Mean Recall: 0.1060514334769225
+Mean F-Measure: 0.1865643727176847
+Mean Average Precision: 0.8799029982363316
+Mean NDCG: 0.6972181854839434
+Query Throughout: 1.1214928681628007/s
+Query Median: 1.046877145767212s
+
+
