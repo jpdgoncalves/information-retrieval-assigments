@@ -17,7 +17,7 @@ than 3 characters, stopwords will be filtered and words will be stemmed
 After the indexing process is done it will load the index and the
 queries in `data/queries.txt` as well as queries relevance in `data/queries.relevance.txt`.
 Then for each query it will retrieve  the top 100 results and write them into `results/results.txt`.
-After processing all queries it will write various evaluation metrics (Precision, Recall, NDGC, etc)
+After processing all queries it will write various evaluation metrics (Precision, Recall, NDCG, etc)
 into `data/evaluation.txt`.
 
 ## Command Options

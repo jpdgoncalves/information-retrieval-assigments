@@ -110,7 +110,7 @@ class Evaluator:
             dest_f.write(f"Mean Recall: {mean(self.recalls)}\n")
             dest_f.write(f"Mean F-Measure: {mean(self.f_measures)}\n")
             dest_f.write(f"Mean Average Precision: {mean(self.avg_precisions)}\n")
-            dest_f.write(f"Mean NDGC: {mean(self.ndgcs)}\n")
+            dest_f.write(f"Mean NDCG: {mean(self.ndgcs)}\n")
 
             query_throughout = len(self.query_times) / sum(self.query_times)
             query_median = median(sorted(self.query_times))
