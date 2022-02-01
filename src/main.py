@@ -65,7 +65,7 @@ def print_statistics(indexing_statistics: IndexingStatistics):
 
 def read_queries_file(queries_path: str):
     with open(queries_path, encoding="utf-8") as queries_file:
-        return [query.strip() for query in queries_file]
+        return [query.strip().lower() for query in queries_file]
 
 
 def write_results(
