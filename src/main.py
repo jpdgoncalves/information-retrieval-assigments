@@ -1,5 +1,5 @@
 """
-Script that is called to run the indexer and the searcher.
+Script that is called to run the indexer, the searcher and the evaluator.
 
 Made by: José Gonçalves nº84967
 """
