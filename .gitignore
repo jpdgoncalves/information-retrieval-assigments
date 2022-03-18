@@ -11,3 +11,4 @@ log.txt
 *.bat
 tf_idf_index/
 bm25_index/
+__pycache__
